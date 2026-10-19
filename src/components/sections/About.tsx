@@ -26,7 +26,7 @@ export function About() {
   const textStyle = reduced ? { opacity: 1, y: 0 } : { opacity: textOpacity, y: textY }
 
   return (
-    <section ref={ref} className="relative h-[140vh] md:h-[200vh]">
+    <section id="sobre" ref={ref} data-snap="start" className="relative h-[140vh] md:h-[200vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* CAMADA 1 — Imagem com inset animado (isolada) */}
         <motion.div style={imageStyle} className="absolute overflow-hidden">

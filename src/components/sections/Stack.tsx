@@ -42,7 +42,7 @@ export function Stack() {
   const reduced = useReducedMotion()
 
   return (
-    <section className="bg-cream relative overflow-hidden py-24 md:py-32">
+    <section id="stack" data-snap="start" className="bg-cream relative overflow-hidden py-24 md:py-32">
       {/* ===== BACKGROUND ===== */}
       <div className="absolute inset-0 -z-10" aria-hidden>
         <div

@@ -8,14 +8,20 @@ import { Journey } from '@/components/sections/Journey'
 import { Stack } from '@/components/sections/Stack'
 import { Education } from '@/components/sections/Education'
 import { Footer } from '@/components/sections/Footer'
+import { Cosmos } from '#/components/sections/Cosmos'
+import { NavBar } from '#/components/ui/NavBar'
+import { useScrollSnap } from '#/hooks/useScrollSnap'
 
 export const Route = createFileRoute('/')({
   component: Home,
 })
 
 function Home() {
+  useScrollSnap(true)
+  
   return (
     <>
+    <NavBar />
       <main className="bg-cream text-navy relative">
         <Hero />
         <Authority />
@@ -25,6 +31,7 @@ function Home() {
         <Journey />
         <Stack />
         <Education />
+        <Cosmos />
       </main>
       <Footer />
     </>

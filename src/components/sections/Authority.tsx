@@ -29,6 +29,7 @@ export function Authority() {
   return (
     <section
       ref={sectionRef}
+      data-snap="start"
       className="bg-navy text-cream relative overflow-hidden py-28 md:py-36"
     >
       <div

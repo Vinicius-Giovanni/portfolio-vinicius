@@ -63,7 +63,7 @@ const CARDS: EducationCard[] = [
 
 export function Education() {
   return (
-    <section className="bg-cream relative overflow-hidden py-24 md:py-32">
+    <section data-snap="start" className="bg-cream relative overflow-hidden py-24 md:py-32">
       {/* Grid pontilhado de fundo */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
