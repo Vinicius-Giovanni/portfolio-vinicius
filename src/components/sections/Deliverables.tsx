@@ -33,7 +33,7 @@ export function Deliverables() {
   })
 
   return (
-    <section id="entregaveis" ref={ref} className="relative h-[380vh]">
+    <section id="entregaveis" data-snap="multi" data-snap-intervals="3" ref={ref} className="relative h-[380vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <motion.div style={{ x: reduced ? 0 : x }} className="flex h-full w-[300vw]">
           <PanelImpact isActive={active === 0} />

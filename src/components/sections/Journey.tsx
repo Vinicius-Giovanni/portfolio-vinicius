@@ -81,7 +81,7 @@ export function Journey() {
   if (reduced) return <ReducedFallback />
 
   return (
-    <section id="trajetoria" ref={ref} className="relative h-[600vh] bg-navy">
+    <section id="trajetoria" data-snap="multi" data-snap-intervals="6" ref={ref} className="relative h-[600vh] bg-navy">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Section label */}
         <div className="absolute top-6 left-6 z-30 md:top-8 md:left-10">

@@ -34,12 +34,11 @@ const TESTIMONIALS = [
   },
 ]
 
-const AUTO_ADVANCE_MS = 5000
+const AUTO_ADVANCE_MS = 7000
 
 export function Testimonials() {
   const [index, setIndex] = useState(0)
   const [direction, setDirection] = useState(1)
-  const [hovering, setHovering] = useState(false)
   const reduced = useReducedMotion()
   const touchStart = useRef<number | null>(null)
 
@@ -63,16 +62,16 @@ export function Testimonials() {
   }
 
   useEffect(() => {
-    if (hovering || reduced) return
+    if (reduced) return
     const id = setInterval(() => {
       setDirection(1)
       setIndex((i) => (i + 1) % total)
     }, AUTO_ADVANCE_MS)
     return () => clearInterval(id)
-  }, [hovering, reduced, index, total])
+  }, [reduced, index, total])
 
   return (
-    <section className="bg-cream relative overflow-hidden py-24 md:py-32">
+    <section data-snap="start" className="bg-cream relative overflow-hidden py-24 md:py-32">
       {/* Grid pontilhado de fundo */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -102,8 +101,6 @@ export function Testimonials() {
       <div
         className="relative mx-auto mt-12 flex h-[60vh] min-h-[460px] w-[min(92%,1100px)] items-center justify-center md:mt-16"
         style={{ perspective: 1600 }}
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
         onTouchStart={(e) => {
           touchStart.current = e.touches[0].clientX
         }}
@@ -232,7 +229,7 @@ export function Testimonials() {
               }
             />
             {/* Barra de progresso interna no dot ativo */}
-            {i === index && !hovering && !reduced && (
+            {i === index && !reduced && (
               <motion.span
                 key={`progress-${index}`}
                 initial={{ scaleX: 0 }}

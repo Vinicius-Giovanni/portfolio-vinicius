@@ -6,7 +6,7 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react'
-import { Mail, Phone, ExternalLink, ArrowUpRight, ArrowUp } from 'lucide-react'
+import { FileText, Mail, Phone, ExternalLink, ArrowUpRight, ArrowUp } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { TiltCard } from '@/components/ui/TiltCard'
 
@@ -35,7 +35,9 @@ export function Footer() {
     <footer
       id="contato"
       ref={ref}
-      className="rounded-t-brand bg-navy text-cream relative mt-16 overflow-hidden px-6 pt-20 pb-8 md:mt-24 md:rounded-t-[60px] md:px-12 md:pt-28 md:pb-10"
+      data-snap="start"
+      className="text-cream relative -mt-12 overflow-hidden rounded-t-[40px] px-6 pt-20 pb-8 shadow-[0_-30px_60px_-15px_rgba(0,0,0,0.6)] md:-mt-20 md:rounded-t-[80px] md:px-12 md:pt-28 md:pb-10"
+      style={{ backgroundColor: '#081729' }}
     >
       {/* ===== BACKGROUND ===== */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -142,7 +144,7 @@ export function Footer() {
         </motion.p>
 
         {/* ===== CONTACT CARDS ===== */}
-        <div className="mt-16 grid gap-4 md:mt-20 md:grid-cols-3 md:gap-5">
+        <div className="mt-16 grid gap-4 md:mt-20 md:grid-cols-2 lg:grid-cols-4">
           <ContactCard
             href="mailto:viniciusgiovanni588@gmail.com"
             icon={Mail}
@@ -167,6 +169,14 @@ export function Footer() {
             value="grupocosmos.com.br"
             external
             delay={1.0}
+            inView={inView}
+          />
+          <ContactCard
+            href="/cv"
+            icon={FileText}
+            label="Currículo"
+            value="Ver / Baixar PDF"
+            delay={1.1}
             inView={inView}
           />
         </div>
