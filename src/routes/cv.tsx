@@ -8,6 +8,7 @@ import {
   CV_VARIANTS,
   type CVVariant,
 } from '@/data/cv'
+import { NavBar } from '#/components/ui/NavBar'
 
 export const Route = createFileRoute('/cv')({
   validateSearch: (search: Record<string, unknown>): { v: CVVariant } => ({
@@ -28,9 +29,11 @@ function CVPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#ede6d8] text-[#0b1f3a] print:bg-white">
+    <>
+    <NavBar forceVisible />
+    <div className="min-h-screen bg-[#ede6d8] text-[#0b1f3a] pt-14 print:bg-white print:pt-0">
       {/* Barra de ações — some na impressão */}
-      <div className="sticky top-0 z-50 bg-[#ede6d8] print:hidden">
+      <div className="sticky top-14 z-50 bg-[#ede6d8] print:hidden">
         <div className="mx-auto flex max-w-[210mm] flex-wrap items-center justify-between gap-3 px-4 py-4">
           <div className="flex items-center gap-2 rounded-full bg-white/60 p-1 backdrop-blur-sm">
             {(Object.keys(CV_VARIANTS) as CVVariant[]).map((key) => (
@@ -128,6 +131,7 @@ function CVPage() {
         }
       `}</style>
     </div>
+    </>
   )
 }
 

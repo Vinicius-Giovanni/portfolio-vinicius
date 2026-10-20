@@ -17,21 +17,34 @@ export const EXPERIENCE = {
     bullets: [
       'Desenvolvimento e gestão de relatórios estratégicos em nível Brasil (INBOUND e OUTBOUND).',
       'Liderança de projetos nacionais de BI: padronização de KPIs de Expedição e análise comparativa de Produtividade.',
-      'Criação de automações e RPA em Python, reduzindo tempo operacional.',
+      'Criação de automações e RPA em Python, reduzindo tempo operacional e erros manuais.',
       'Atuação em célula corporativa de análises estratégicas para todas as filiais.',
     ],
     highlights: [
-      { label: 'Redução de Custos em Fretamento', text: 'R$ 13M → R$ 8M/ano mantendo SLA.' },
-      { label: 'Data Quality', text: 'ganho estimado de R$ 3 milhões anuais.' },
-      { label: 'Redução de Lead Time', text: '-1h30 na expedição (economia de ~R$ 100 mil/mês).' },
-      { label: 'Implantação Manhattan MHT', text: 'mapeamento e padronização do fluxo operacional ponta a ponta.' },
+      {
+        label: 'Diagnóstico de Gargalos em Expedição de Alta Escala',
+        text: 'R$ 25,5 mi de capital liberado em fluxo parado + R$ 3,6 mi/ano de custo financeiro evitado. Tempo parado por peça: 20h → 3h (-85%). Lead time total: 48h → 31h (-35%).',
+      },
+      {
+        label: 'Data Quality em Operação de Transporte',
+        text: 'Centralização de dezenas de fontes em 1 B.I unificado. Custo operacional: R$ 13 mi → R$ 10 mi/ano (-23%), com R$ 3 mi/ano de economia direta (R$ 300 mil/mês).',
+      },
+      {
+        label: 'Automação RPA em Programação de Pedidos',
+        text: '1h → 5min por execução (-92%). +5.400 horas/ano liberadas. R$ 98 mil/ano de economia direta + ~R$ 12 mi/ano em ganhos operacionais estimados.',
+      },
+      {
+        label: 'Infraestrutura de BI Logístico Nacional',
+        text: 'Fonte única de verdade para toda a filial, com KPIs padronizados em nível Brasil e automação de alimentação de dados.',
+      },
     ],
   },
   casasBahiaAssistant: {
     company: 'Grupo Casas Bahia',
     role: 'Assistente Administrativo',
     period: 'Jun 2022 – Jul 2023',
-    description: 'Controles administrativos e manipulação de dados em Excel para apoio à operação logística.',
+    description:
+      'Controles administrativos e manipulação de dados em Excel para apoio à operação logística.',
   },
   casasBahiaHelper: {
     company: 'Grupo Casas Bahia',
@@ -42,7 +55,11 @@ export const EXPERIENCE = {
 }
 
 export const EDUCATION = [
-  { title: 'Bacharelado em Engenharia de Dados', institution: 'UNICV', period: '2025 – 2028 (cursando)' },
+  {
+    title: 'Bacharelado em Engenharia de Dados',
+    institution: 'UNICV',
+    period: '2025 – 2028 (cursando)',
+  },
   { title: 'Leadership Communication', institution: 'FIAP', period: '2026' },
   { title: 'Gestão Financeira de Empresas', institution: 'FIAP', period: '2026' },
   { title: 'Data Analyst Learning Plan', institution: 'Databricks', period: '2026' },
@@ -65,7 +82,7 @@ export const CV_VARIANTS = {
     label: 'Corporativo',
     tagline: 'Para bancos, indústrias e grandes empresas',
     summary:
-      'Analista de dados com experiência em logística nacional, automação RPA e desenvolvimento de soluções web. Atuação em célula corporativa que atende centros de distribuição em todo o Brasil, com projetos que geraram economia anual superior a R$ 8 milhões e redução de 23% na frota mantendo 100% do atendimento. Consultoria técnica paralela em automação e engenharia de dados. Cursando Bacharelado em Engenharia de Dados.',
+      'Analista de dados com experiência em logística nacional de grande escala, automação RPA e engenharia de dados. Atuação em célula corporativa que atende centros de distribuição em todo o Brasil, com projetos de impacto mensurável: R$ 25,5 mi de capital liberado em fluxo parado, R$ 3,6 mi/ano em custo financeiro evitado e R$ 3 mi/ano em economia direta com Data Quality. Consultoria técnica paralela em automação e engenharia de dados. Cursando Bacharelado em Engenharia de Dados.',
     cosmos: {
       company: 'Cosmos',
       role: 'Consultoria Técnica em Automação e Dados (projeto paralelo)',
@@ -82,7 +99,7 @@ export const CV_VARIANTS = {
     label: 'Tech / Startup',
     tagline: 'Para startups, consultorias e vagas internacionais',
     summary:
-      'Data & Software professional com background em logística nacional, automação RPA e desenvolvimento full-stack. Fundador da Cosmos, consultoria técnica B2B que já entregou 14 softwares e 19 projetos de BI, gerando +R$ 4 mi de economia anual para clientes. Atuo como analista de planejamento no Grupo Casas Bahia, liderando iniciativas de BI e automação em escala nacional. Cursando Engenharia de Dados.',
+      'Data & Software professional com background em logística nacional de grande escala, automação RPA e desenvolvimento full-stack. Fundador da Cosmos, consultoria técnica B2B que já entregou 14 softwares e 19 projetos de BI, gerando +R$ 4 mi de economia anual para clientes. Atuo como analista de planejamento no Grupo Casas Bahia, liderando iniciativas de BI e automação em escala nacional — com projetos que resultaram em R$ 25,5 mi de capital liberado e +5.400 horas/ano devolvidas aos times operacionais. Cursando Engenharia de Dados.',
     cosmos: {
       company: 'Cosmos',
       role: 'Fundador',
