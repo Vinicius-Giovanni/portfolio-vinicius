@@ -5,11 +5,38 @@ import { SectionLabel } from '@/components/ui/SectionLabel'
 type StatItem = { stat: string; text: string }
 
 const ITEMS: StatItem[] = [
-  { stat: '+R$ 4 mi', text: 'de economia anual com implementação de soluções sob medida.' },
-  { stat: 'Cosmos', text: 'empresa de Automação RPA + IA, Software & Engenharia de Dados B2B' },
-  { stat: '53%', text: 'de economia de tempo em rotinas operacionais manuais.' },
-  { stat: '+14', text: 'Softwares sob medida entregues.' },
-  { stat: '+19', text: 'Projetos de Business Intelligence entregues.' },
+  {
+    stat: 'R$ 25,5 mi',
+    text: 'de capital liberado em fluxo parado — estoque em trânsito que voltou ao caixa.',
+  },
+  {
+    stat: 'R$ 12 mi/ano',
+    text: 'de ganhos operacionais estimados com automação RPA em processos críticos.',
+  },
+  {
+    stat: 'R$ 3,6 mi/ano',
+    text: 'de custo financeiro evitado com redução de lead time em operação de alta escala.',
+  },
+  {
+    stat: 'R$ 3 mi/ano',
+    text: 'de economia direta com projetos de Data Quality e centralização de dados.',
+  },
+  {
+    stat: '+5.400 horas',
+    text: 'devolvidas a times operacionais em um único projeto de automação.',
+  },
+  {
+    stat: '+14',
+    text: 'softwares e automações sob medida entregues, de RPA a aplicações web.',
+  },
+  {
+    stat: '+19',
+    text: 'projetos de Business Intelligence entregues em operações logísticas.',
+  },
+  {
+    stat: 'Cosmos',
+    text: 'empresa de Automação RPA + IA, Software & Engenharia de Dados B2B.',
+  },
 ]
 
 export function Authority() {
@@ -21,9 +48,7 @@ export function Authority() {
     offset: ['start end', 'end start'],
   })
 
-  // Watermark desliza horizontalmente conforme rola
   const watermarkX = useTransform(sectionProgress, [0, 1], ['-10%', '-40%'])
-  // Linha de progresso vertical cresce de cima pra baixo
   const progressScaleY = useTransform(sectionProgress, [0.1, 0.9], [0, 1])
 
   return (
@@ -36,8 +61,7 @@ export function Authority() {
         className="pointer-events-none absolute inset-0 opacity-[0.08]"
         aria-hidden
         style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(237,230,216,0.8) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, rgba(237,230,216,0.8) 1px, transparent 1px)',
           backgroundSize: '32px 32px',
           maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
           WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
@@ -56,7 +80,6 @@ export function Authority() {
         />
       )}
 
-      {/* Watermark — anda com scroll horizontalmente */}
       <motion.span
         style={{ x: reduced ? 0 : watermarkX }}
         className="font-anton text-cream/[0.03] pointer-events-none absolute bottom-0 left-0 leading-none whitespace-nowrap select-none"
@@ -78,12 +101,13 @@ export function Authority() {
           O impacto, em <span className="text-cream/40">números.</span>
         </motion.h2>
 
+        <p className="text-cream/60 mt-5 max-w-xl text-sm leading-relaxed">
+          Projetos reais em operações logísticas de grande escala. Números auditáveis, sem
+          somatórios — cada um com sua própria origem e contexto.
+        </p>
+
         <div className="relative mt-16 md:mt-20">
-          {/* Linha vertical de progresso à esquerda */}
-          <div
-            className="bg-cream/10 absolute top-0 bottom-0 left-0 hidden w-px md:block"
-            aria-hidden
-          />
+          <div className="bg-cream/10 absolute top-0 bottom-0 left-0 hidden w-px md:block" aria-hidden />
           <motion.div
             style={{ scaleY: reduced ? 1 : progressScaleY }}
             className="bg-cream/60 absolute top-0 bottom-0 left-0 hidden w-px origin-top md:block"
@@ -110,11 +134,9 @@ function StatRow({ item, index }: { item: StatItem; index: number }) {
     offset: ['start end', 'end start'],
   })
 
-  // Três velocidades diferentes — cria profundidade real
   const numberX = useTransform(scrollYProgress, [0, 1], [40, -40])
   const descX = useTransform(scrollYProgress, [0, 1], [-30, 30])
   const indexY = useTransform(scrollYProgress, [0, 1], [-15, 15])
-  // Linha do topo se preenche com o scroll
   const lineScale = useTransform(scrollYProgress, [0.15, 0.5], [0, 1])
 
   return (
@@ -128,16 +150,14 @@ function StatRow({ item, index }: { item: StatItem; index: number }) {
         delay: reduced ? 0 : index * 0.05,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="group relative grid grid-cols-1 items-center gap-4 border-t border-cream/15 py-8 transition-colors duration-500 hover:border-cream/40 md:grid-cols-12 md:gap-8 md:py-10"
+      className="group border-cream/15 hover:border-cream/40 relative grid grid-cols-1 items-center gap-4 border-t py-8 transition-colors duration-500 md:grid-cols-12 md:gap-8 md:py-10"
     >
-      {/* Linha que se desenha com scroll */}
       <motion.div
         style={{ scaleX: reduced ? 1 : lineScale }}
         className="bg-cream/70 absolute top-0 left-0 h-px w-full origin-left"
         aria-hidden
       />
 
-      {/* Índice — sobe/desce com scroll */}
       <motion.span
         style={{ y: reduced ? 0 : indexY }}
         className="text-cream/30 hidden font-mono text-xs font-bold tracking-[0.25em] md:col-span-1 md:block"
@@ -145,20 +165,17 @@ function StatRow({ item, index }: { item: StatItem; index: number }) {
         {String(index + 1).padStart(2, '0')}
       </motion.span>
 
-      {/* Número — anda para esquerda conforme rola */}
       <motion.div style={{ x: reduced ? 0 : numberX }} className="md:col-span-5">
-        <span className="font-anton group-hover:text-cream block text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.9] tracking-tight text-cream/90 transition-colors duration-300">
+        <span className="font-anton group-hover:text-cream block text-[clamp(2rem,5.5vw,4.5rem)] leading-[0.9] tracking-tight text-cream/90 transition-colors duration-300">
           {item.stat}
         </span>
       </motion.div>
 
-      {/* Divisor vertical */}
       <div
         className="bg-cream/20 group-hover:bg-cream/50 hidden h-14 w-px transition-colors duration-300 md:col-span-1 md:block"
         aria-hidden
       />
 
-      {/* Descrição — anda para direita (direção oposta) */}
       <motion.p
         style={{ x: reduced ? 0 : descX }}
         className="text-cream/60 group-hover:text-cream/85 max-w-xl text-sm leading-relaxed transition-colors duration-300 md:col-span-5 md:text-base"

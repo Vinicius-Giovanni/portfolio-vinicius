@@ -9,6 +9,8 @@ type Card = {
   title: string
   description: string
   metrics?: { label: string; value: string }[]
+  metricsTitle?: string
+  metricsFooter?: string
 }
 
 const CARDS: Card[] = [
@@ -29,14 +31,20 @@ const CARDS: Card[] = [
   {
     number: '03',
     icon: TrendingUp,
-    title: 'Resultado',
+    title: 'Founder track record',
     description:
-      'Projetos entregues com impacto mensurável em economia, tempo e escala. Cada solução nasce de um problema de negócio — nunca de uma tecnologia em busca de uso.',
+      'Fundada por profissional com histórico comprovado em operações logísticas de grande escala. Cada solução nasce de um problema real, resolvido com dados.',
+    metricsTitle: 'Impacto já entregue',
     metrics: [
+      { label: 'Capital liberado', value: 'R$ 25,5 mi' },
       { label: 'Economia anual', value: '+R$ 4 mi' },
+      { label: 'Custo evitado', value: 'R$ 3,6 mi' },
+      { label: 'Horas devolvidas', value: '+5.400h' },
       { label: 'Softwares', value: '+14' },
       { label: 'Projetos BI', value: '+19' },
     ],
+    metricsFooter:
+      'Números entregues pelo fundador em projetos anteriores e pela Cosmos desde 2026.',
   },
 ]
 
@@ -44,8 +52,7 @@ export function Cosmos() {
   const reduced = useReducedMotion()
 
   return (
-    <section data-snap="start" className="bg-navy text-cream relative overflow-hidden pt-24 pb-32 md:pt-32 md:pb-40"> 
-      {/* ===== BACKGROUND ===== */}
+    <section className="bg-navy text-cream relative overflow-hidden py-24 md:py-32">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div
           className="absolute inset-0 opacity-[0.05]"
@@ -69,7 +76,6 @@ export function Cosmos() {
       <div className="relative mx-auto w-[min(92%,1280px)]">
         <SectionLabel variant="light">COSMOS</SectionLabel>
 
-        {/* ===== HEADER ===== */}
         <div className="mt-10 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -90,7 +96,6 @@ export function Cosmos() {
             </p>
           </motion.div>
 
-          {/* CTA lateral — só no desktop */}
           <motion.a
             href="https://www.grupocosmos.com.br"
             target="_blank"
@@ -100,7 +105,7 @@ export function Cosmos() {
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ y: -2 }}
-            className="group hidden items-center gap-2 rounded-full border border-cream/20 px-6 py-3 text-sm font-bold transition-colors hover:border-cream/60 hover:bg-cream/5 md:inline-flex"
+            className="group border-cream/20 hover:border-cream/60 hover:bg-cream/5 hidden items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold transition-colors md:inline-flex"
           >
             Conhecer a Cosmos
             <ArrowUpRight
@@ -110,14 +115,12 @@ export function Cosmos() {
           </motion.a>
         </div>
 
-        {/* ===== 3 CARDS ===== */}
         <div className="mt-14 grid gap-4 md:mt-16 md:grid-cols-3 md:gap-5">
           {CARDS.map((card, i) => (
             <CosmosCard key={card.number} card={card} index={i} />
           ))}
         </div>
 
-        {/* CTA — só no mobile */}
         <motion.a
           href="https://www.grupocosmos.com.br"
           target="_blank"
@@ -139,6 +142,7 @@ export function Cosmos() {
 function CosmosCard({ card, index }: { card: Card; index: number }) {
   const reduced = useReducedMotion()
   const { icon: Icon } = card
+  const isTrackRecord = !!card.metrics
 
   return (
     <motion.div
@@ -157,7 +161,6 @@ function CosmosCard({ card, index }: { card: Card; index: number }) {
         'hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.4)]',
       )}
     >
-      {/* Glow dourado no hover */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{
@@ -167,40 +170,45 @@ function CosmosCard({ card, index }: { card: Card; index: number }) {
         aria-hidden
       />
 
-      {/* Header do card */}
       <div className="relative flex items-start justify-between">
         <div className="border-cream/15 bg-cream/5 group-hover:border-cream/40 group-hover:bg-cream/10 flex h-11 w-11 items-center justify-center rounded-full border transition-colors">
           <Icon className="text-cream h-5 w-5" aria-hidden />
         </div>
-
         <span className="text-cream/25 font-mono text-[10px] font-bold tracking-[0.25em]">
           {card.number}
         </span>
       </div>
 
-      {/* Título */}
       <h3 className="text-cream relative mt-6 text-xl leading-tight font-bold md:text-2xl">
         {card.title}
       </h3>
 
-      {/* Descrição */}
       <p className="text-cream/65 group-hover:text-cream/80 relative mt-3 text-sm leading-relaxed transition-colors">
         {card.description}
       </p>
 
-      {/* Métricas (só o card 3) */}
-      {card.metrics && (
-        <div className="border-cream/10 relative mt-6 grid grid-cols-3 gap-2 border-t pt-5">
-          {card.metrics.map((m) => (
-            <div key={m.label}>
-              <p className="font-anton text-cream text-lg leading-none md:text-xl">
-                {m.value}
-              </p>
-              <p className="text-cream/40 mt-1.5 text-[9px] leading-tight font-bold tracking-wider uppercase">
-                {m.label}
-              </p>
-            </div>
-          ))}
+      {isTrackRecord && card.metrics && (
+        <div className="border-cream/10 relative mt-6 border-t pt-5">
+          <p className="text-cream/40 mb-3 text-[9px] font-bold tracking-[0.2em] uppercase">
+            {card.metricsTitle}
+          </p>
+          <div className="grid grid-cols-3 gap-x-2 gap-y-3">
+            {card.metrics.map((m) => (
+              <div key={m.label}>
+                <p className="font-anton text-cream text-base leading-none md:text-lg">
+                  {m.value}
+                </p>
+                <p className="text-cream/45 mt-1 text-[8px] leading-tight font-bold tracking-wider uppercase">
+                  {m.label}
+                </p>
+              </div>
+            ))}
+          </div>
+          {card.metricsFooter && (
+            <p className="text-cream/35 mt-4 border-t border-cream/10 pt-3 text-[9px] leading-relaxed italic">
+              {card.metricsFooter}
+            </p>
+          )}
         </div>
       )}
     </motion.div>

@@ -84,17 +84,14 @@ export function Journey() {
     <section id="trajetoria" data-snap="multi" data-snap-intervals="6" ref={ref} className="relative h-[600vh] bg-navy">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Section label */}
-        <div className="absolute top-6 left-6 z-30 md:top-8 md:left-10">
+        <div className="absolute top-16 left-5 z-30 md:top-8 md:left-10">
           <SectionLabel variant="light">TRAJETÓRIA</SectionLabel>
         </div>
 
-        {/* Story progress bars (Instagram style) — top center */}
-        <div className="absolute top-6 left-1/2 z-30 flex -translate-x-1/2 gap-1 md:top-8 md:gap-1.5">
+        {/* Story progress bars */}
+        <div className="absolute top-20 left-1/2 z-30 flex -translate-x-1/2 gap-1 md:top-8 md:gap-1.5">
           {TIMELINE.map((_, i) => (
-            <div
-              key={i}
-              className="bg-cream/20 h-0.5 w-8 overflow-hidden rounded-full md:w-12"
-            >
+            <div key={i} className="bg-cream/20 h-0.5 w-6 overflow-hidden rounded-full md:w-12">
               <motion.div
                 animate={{ scaleX: i <= active ? 1 : 0 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -104,14 +101,12 @@ export function Journey() {
           ))}
         </div>
 
-        {/* Chapter counter — top right */}
-        <div className="pointer-events-none absolute top-6 right-6 z-30 flex items-baseline gap-1 md:top-8 md:right-10">
+        {/* Chapter counter */}
+        <div className="pointer-events-none absolute top-16 right-5 z-30 flex items-baseline gap-1 md:top-8 md:right-10">
           <span className="font-anton text-cream text-2xl leading-none md:text-3xl">
             {String(active + 1).padStart(2, '0')}
           </span>
-          <span className="text-cream/40 text-sm leading-none">
-            / {String(N).padStart(2, '0')}
-          </span>
+          <span className="text-cream/40 text-sm leading-none">/ {String(N).padStart(2, '0')}</span>
         </div>
 
         {/* Horizontal track */}

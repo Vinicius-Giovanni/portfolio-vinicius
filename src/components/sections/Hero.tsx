@@ -11,6 +11,7 @@ import {
 import { BarChart3, Bot } from 'lucide-react'
 import { HeroCanvas } from '@/components/three/HeroCanvas'
 import { cn } from '@/lib/utils'
+import { useNavigate } from '@tanstack/react-router'
 
 function scrollToId(id: string) {
   const target = document.querySelector(id)
@@ -42,6 +43,7 @@ const FLOATING_TECHS = [
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
+  const navigate = useNavigate()
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -61,6 +63,11 @@ export function Hero() {
     {
       label: 'Ver Projetos →',
       variant: 'ghost' as const,
+      onClick: () => navigate({ to: '/projetos' }),
+    },
+    {
+      label: 'Ver Entregáveis →',
+      variant: 'solid' as const,
       onClick: () => scrollToId('#entregaveis'),
     },
     {
@@ -155,7 +162,7 @@ export function Hero() {
       </motion.div>
 
       {/* Botões */}
-      <div className="absolute bottom-8 left-1/2 z-40 flex w-[min(92%,860px)] -translate-x-1/2 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-3 md:bottom-12">
+      <div className="absolute bottom-6 left-1/2 z-40 flex w-[min(92%,960px)] -translate-x-1/2 flex-col items-stretch gap-2.5 sm:grid sm:grid-cols-2 sm:gap-3 md:bottom-10 md:grid-cols-4">
         {buttons.map((btn, i) => (
           <HeroButton
             key={btn.label}
@@ -200,7 +207,7 @@ function HeroButton({ variant, onClick, delay, children }: HeroButtonProps) {
       }}
       onClick={onClick}
       className={cn(
-        'rounded-brand flex-1 px-6 py-3 text-center text-[clamp(0.875rem,1vw,1.1rem)] font-bold whitespace-nowrap',
+        'rounded-brand px-4 py-3 text-center text-[clamp(0.8rem,0.9vw,1rem)] font-bold whitespace-nowrap',
         variant === 'solid' ? 'bg-navy text-cream' : 'bg-cream text-navy border-navy border',
       )}
     >

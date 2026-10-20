@@ -9,6 +9,7 @@ import {
 import { FileText, Mail, Phone, ExternalLink, ArrowUpRight, ArrowUp } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { TiltCard } from '@/components/ui/TiltCard'
+import { Link } from '@tanstack/react-router'
 
 const HEADLINE = ['VAMOS', 'CONSTRUIR', 'ALGO', 'INCRÍVEL', 'JUNTOS?']
 
@@ -213,6 +214,20 @@ export function Footer() {
             <span className="inline-block h-1 w-1 rounded-full bg-cream/40" />
             Feito com dedicação em São Paulo, BR
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.6, delay: 1.45 }}
+          >
+            <Link
+              to="/projetos"
+              className="text-cream/60 hover:text-cream group inline-flex items-center gap-1.5 text-xs font-medium transition-colors"
+            >
+              Ver dossiês
+              <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          </motion.div>
 
           {/* Scroll to top button */}
           <motion.button
