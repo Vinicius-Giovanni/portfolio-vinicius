@@ -181,16 +181,30 @@ function Rivet({ position }: { position: [number, number, number] }) {
 type SceneProps = {
   isActive?: boolean
   isVisible?: boolean
+  isMobile?: boolean
 }
 
-export function FinancialScene({ isActive = true, isVisible = true }: SceneProps) {
+export function FinancialScene({
+  isActive = true,
+  isVisible = true,
+  isMobile = false,
+}: SceneProps) {
   const reduced = useReducedMotion()
   const doorRef = useRef<THREE.Group>(null)
   const dialRef = useRef<THREE.Group>(null)
   const glowRef = useRef<THREE.PointLight>(null)
   const animStartRef = useRef<number | null>(null)
 
-  // Reset em QUALQUER mudança de isActive ou isVisible
+  // Posições — desktop: canto direito | mobile: centro-atrás, menor, menos dominante
+  const safePosition: [number, number, number] = isMobile ? [0.15, -0.15, -1.6] : [2.5, -0.15, 0]
+  const safeRotation: [number, number, number] = isMobile ? [0, 0, 0] : [0, -0.75, 0]
+  const safeScale = isMobile ? 0.82 : 1
+  const doorSwing = isMobile ? 1.05 : 1.4
+
+  const lightPosition: [number, number, number] = isMobile ? [0.15, 0.3, 0.6] : [2.5, 0.3, 0.6]
+  const shadowPosition: [number, number, number] = isMobile ? [0.15, -1.2, -1.6] : [2.5, -1.2, 0]
+  const shadowOpacity = isMobile ? 0.4 : 0.75
+
   useEffect(() => {
     animStartRef.current = null
     if (doorRef.current) doorRef.current.rotation.y = 0
@@ -202,7 +216,7 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
     if (!isActive || !isVisible) return
 
     if (reduced) {
-      if (doorRef.current) doorRef.current.rotation.y = -1.4
+      if (doorRef.current) doorRef.current.rotation.y = -doorSwing
       if (glowRef.current) glowRef.current.intensity = 2
       return
     }
@@ -210,21 +224,18 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
     if (animStartRef.current === null) animStartRef.current = state.clock.elapsedTime
     const elapsed = state.clock.elapsedTime - animStartRef.current
 
-    // Fase 1 — Dial gira (0 a 3s)
     if (dialRef.current) {
       const p = Math.min(1, elapsed / 3)
       const eased = 1 - Math.pow(1 - p, 4)
       dialRef.current.rotation.z = eased * Math.PI * 2 * 4
     }
 
-    // Fase 2 — Porta abre (3s a 5s)
     if (doorRef.current) {
       const p = Math.max(0, Math.min(1, (elapsed - 3) / 2))
       const eased = 1 - Math.pow(1 - p, 3)
-      doorRef.current.rotation.y = -eased * 1.4
+      doorRef.current.rotation.y = -eased * doorSwing
     }
 
-    // Fase 3 — Luz externa ilumina o interior (3.5s a 5s)
     if (glowRef.current) {
       const p = Math.max(0, Math.min(1, (elapsed - 3.5) / 1.5))
       glowRef.current.intensity = p * 2.5
@@ -234,14 +245,32 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
   return (
     <group>
       <Environment resolution={256} frames={Infinity}>
-        <Lightformer form="rect" intensity={2.5} position={[5, 3, 4]} scale={[8, 8, 1]} color="#FFF0C8" />
-        <Lightformer form="rect" intensity={3} position={[-2, 1, -6]} scale={[10, 6, 1]} color="#A8C0FF" />
-        <Lightformer form="rect" intensity={1.5} position={[0, 6, 0]} scale={[8, 8, 1]} color="#FFFFFF" />
+        <Lightformer
+          form="rect"
+          intensity={2.5}
+          position={[5, 3, 4]}
+          scale={[8, 8, 1]}
+          color="#FFF0C8"
+        />
+        <Lightformer
+          form="rect"
+          intensity={3}
+          position={[-2, 1, -6]}
+          scale={[10, 6, 1]}
+          color="#A8C0FF"
+        />
+        <Lightformer
+          form="rect"
+          intensity={1.5}
+          position={[0, 6, 0]}
+          scale={[8, 8, 1]}
+          color="#FFFFFF"
+        />
       </Environment>
 
       <ContactShadows
-        position={[2.5, -1.2, 0]}
-        opacity={0.75}
+        position={shadowPosition}
+        opacity={shadowOpacity}
         scale={7}
         blur={2.8}
         far={3.5}
@@ -249,26 +278,21 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
         resolution={512}
       />
 
-      {/* Iluminação ambiente aumentada para não deixar as barras 100% pretas */}
       <ambientLight intensity={0.55} />
       <directionalLight position={[5, 6, 4]} intensity={1.3} color="#FFF0C8" />
       <directionalLight position={[-4, 2, -3]} intensity={0.9} color="#A8C0FF" />
-      {/* Luz direcional extra apontando para frente do cofre (ilumina o interior pela abertura) */}
       <directionalLight position={[3, 1, 4]} intensity={0.7} color="#FFE4A0" />
 
-      {/* ÚNICA luz da cena que ilumina o interior — está FORA do cofre, na frente */}
       <pointLight
         ref={glowRef}
-        position={[2.5, 0.3, 0.6]}
+        position={lightPosition}
         intensity={0}
         color="#FFE4A0"
         distance={5}
         decay={1.5}
       />
 
-      {/* GRUPO DO COFRE — girado ainda mais para esquerda */}
-      <group position={[2.5, -0.15, 0]} rotation={[0, -0.75, 0]}>
-        {/* PÉS */}
+      <group position={safePosition} rotation={safeRotation} scale={safeScale}>
         {[
           [-SAFE_SIZE / 2 + 0.22, -SAFE_SIZE / 2 - 0.05, -SAFE_DEPTH / 2 + 0.22],
           [SAFE_SIZE / 2 - 0.22, -SAFE_SIZE / 2 - 0.05, -SAFE_DEPTH / 2 + 0.22],
@@ -281,7 +305,6 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
           </mesh>
         ))}
 
-        {/* CORPO */}
         <mesh position={[0, 0, -SAFE_DEPTH / 2 + 0.05]}>
           <boxGeometry args={[SAFE_SIZE, SAFE_SIZE, 0.1]} />
           <SafeBodyMaterial />
@@ -303,7 +326,6 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
           <SafeBodyMaterial />
         </mesh>
 
-        {/* MOLDURAS DA ABERTURA */}
         <mesh position={[0, SAFE_SIZE / 2 - 0.03, SAFE_DEPTH / 2 - 0.03]}>
           <boxGeometry args={[SAFE_SIZE + 0.02, 0.06, 0.04]} />
           <SteelMaterial />
@@ -321,13 +343,11 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
           <SteelMaterial />
         </mesh>
 
-        {/* PISO INTERNO */}
         <mesh position={[0, FLOOR_Y, 0]}>
           <boxGeometry args={[SAFE_SIZE - 0.3, 0.05, SAFE_DEPTH - 0.3]} />
           <meshPhysicalMaterial color={NAVY_DARK} metalness={0.4} roughness={0.75} />
         </mesh>
 
-        {/* 52 BARRAS DE OURO — sem point light interna, iluminadas pela luz externa quando abre */}
         <GoldStack />
 
         {!reduced && (
@@ -342,7 +362,6 @@ export function FinancialScene({ isActive = true, isVisible = true }: SceneProps
           />
         )}
 
-        {/* PORTA */}
         <group ref={doorRef} position={[-SAFE_SIZE / 2, 0, SAFE_DEPTH / 2 - 0.05]}>
           <mesh position={[SAFE_SIZE / 2, 0, 0]}>
             <boxGeometry args={[SAFE_SIZE, SAFE_SIZE, DOOR_THICKNESS]} />
