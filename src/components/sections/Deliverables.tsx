@@ -18,6 +18,12 @@ import { FinancialScene } from '@/components/three/scenes/FinancialScene'
 import { DeliveriesScene } from '@/components/three/scenes/DeliveriesScene'
 import { cn } from '@/lib/utils'
 
+const CARD_TITLES = [
+  'Impacto Financeiro',
+  'Eficiência Operacional',
+  'Entregas Software & BI',
+]
+
 export function Deliverables() {
   const ref = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
@@ -27,10 +33,12 @@ export function Deliverables() {
   })
   const x = useTransform(scrollYProgress, [0, 1], ['0%', '-66.666%'])
   const [active, setActive] = useState(0)
+  const [engaged, setEngaged] = useState(false)
 
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const next = v < 0.33 ? 0 : v < 0.66 ? 1 : 2
     if (next !== active) setActive(next)
+      setEngaged(v > 0)
   })
 
   return (
@@ -42,17 +50,22 @@ export function Deliverables() {
           <PanelDeliveries isActive={active === 2} />
         </motion.div>
 
-        <div className="pointer-events-none absolute top-16 left-5 z-30 md:top-8 md:left-10">
-          <span className="text-navy/40 text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs">
-            ENTREGÁVEIS
-          </span>
-        </div>
-
-        <div className="font-anton text-navy/60 pointer-events-none absolute top-16 right-5 z-30 flex items-baseline gap-1 md:top-8 md:right-10">
-          <span className="text-3xl leading-none md:text-4xl">
-            {String(active + 1).padStart(2, '0')}
-          </span>
-          <span className="text-sm leading-none opacity-50">/ 03</span>
+        {/* Label esquerda — dinâmico: ENTREGÁVEIS → título do card quando engajado */}
+        <div className="pointer-events-none absolute top-16 left-5 z-30 md:top-16 md:left-10">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={engaged ? `title-${active}` : 'section-label'}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className={`inline-block text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs ${
+                active === 1 ? 'text-navy/60' : 'text-cream/60'
+              }`}
+            >
+              {engaged ? CARD_TITLES[active] : 'ENTREGÁVEIS'}
+            </motion.span>
+          </AnimatePresence>
         </div>
 
         <div className="pointer-events-none absolute bottom-5 left-1/2 z-30 -translate-x-1/2 md:bottom-10">
@@ -136,14 +149,6 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
       {/* Conteúdo HTML */}
       <div className="relative z-10 grid w-full max-w-7xl items-center gap-6 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-7">
-          <motion.p
-            initial={{ opacity: 0, x: -20 }}
-            animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-cream/50 text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs"
-          >
-            Impacto Financeiro · Anual
-          </motion.p>
 
           <div className="mt-4 md:mt-5">
             <GlowNumber isActive={isActive}>
@@ -281,14 +286,6 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
 
       <div className="relative z-10 grid w-full max-w-7xl items-center gap-6 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-7">
-          <motion.p
-            initial={{ opacity: 0, x: -20 }}
-            animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-navy/50 text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs"
-          >
-            Eficiência Operacional
-          </motion.p>
 
           <div className="mt-4 flex items-end gap-3 md:mt-5 md:gap-4">
             <div className="font-anton text-navy text-[clamp(2.5rem,10vw,10rem)] leading-[0.85] tracking-tight">
@@ -415,14 +412,6 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
 
       <div className="relative z-10 grid w-full max-w-7xl items-center gap-6 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-7">
-          <motion.p
-            initial={{ opacity: 0, x: -20 }}
-            animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-cream/50 text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs"
-          >
-            Entregas · Software &amp; BI
-          </motion.p>
 
           <div className="mt-4 md:mt-5">
             <GlowNumber isActive={isActive}>

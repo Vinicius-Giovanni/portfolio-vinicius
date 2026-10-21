@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { Workflow, Building2, TrendingUp, ArrowUpRight } from 'lucide-react'
+import { Workflow, Layers, TrendingUp, ArrowUpRight } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { cn } from '@/lib/utils'
 
@@ -17,23 +17,23 @@ const CARDS: Card[] = [
   {
     number: '01',
     icon: Workflow,
-    title: 'O que fazemos',
+    title: 'O que construímos',
     description:
-      'Automação RPA + IA, software sob medida e engenharia de dados para empresas que precisam escalar operações sem escalar custos. Do mapeamento de processo à entrega em produção.',
+      'Não vendemos ferramentas. Entregamos o trabalho. Automatizamos processos manuais, construímos softwares sob medida e estruturamos operações de dados do zero — do mapeamento à entrega em produção. O cliente não compra um dashboard: compra a decisão resolvida.',
   },
   {
     number: '02',
-    icon: Building2,
-    title: 'Pra quem atendemos',
+    icon: Layers,
+    title: 'Como trabalhamos',
     description:
-      'Empresas B2B com operações intensivas em dados e processos manuais: logística, varejo, fintechs, advocacia e marketing. Foco em organizações que já sentem o custo da ineficiência.',
+      'Cada projeto começa entendendo onde a inteligência (tarefas repetitivas, baseadas em regras) pode ser automatizada e onde o julgamento humano (contexto, estratégia, exceções) continua essencial. O resultado é um sistema que executa o trabalho, não apenas uma ferramenta que o profissional precisa operar.',
   },
   {
     number: '03',
     icon: TrendingUp,
     title: 'Founder track record',
     description:
-      'Fundada por profissional com histórico comprovado em operações logísticas de grande escala. Cada solução nasce de um problema real, resolvido com dados.',
+      'Iniciativa construída por profissional com histórico comprovado em operações de grande escala. Cada solução nasce de um problema real, resolvido com dados e automação.',
     metricsTitle: 'Impacto já entregue',
     metrics: [
       { label: 'Capital liberado', value: 'R$ 25,5 mi' },
@@ -44,7 +44,7 @@ const CARDS: Card[] = [
       { label: 'Projetos BI', value: '+19' },
     ],
     metricsFooter:
-      'Números entregues pelo fundador em projetos anteriores e pela Cosmos desde 2026.',
+      'Números entregues pelo fundador em projetos anteriores e pela iniciativa Cosmos desde 2026.',
   },
 ]
 
@@ -85,14 +85,14 @@ export function Cosmos() {
             className="max-w-2xl"
           >
             <h2 className="text-[clamp(1.75rem,3.5vw,2.75rem)] leading-tight font-bold">
-              Empresa de tecnologia,
+              Iniciativa de tecnologia,
               <br />
-              <span className="text-cream/50">fundada por mim.</span>
+              <span className="text-cream/50">construída por mim.</span>
             </h2>
             <p className="text-cream/70 mt-4 text-sm leading-relaxed md:text-base">
               A Cosmos nasceu da obsessão por resolver problemas complexos com tecnologia simples.
-              Construímos automações, sistemas e dashboards sob medida para empresas que já não
-              podem depender de processos manuais para crescer.
+              Construímos automações, sistemas e operações de dados sob medida para quem já não
+              pode depender de processos manuais para crescer.
             </p>
           </motion.div>
 
