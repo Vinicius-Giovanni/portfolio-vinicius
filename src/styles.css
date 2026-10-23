@@ -3,16 +3,209 @@
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/700.css';
 
+/* ============================================================
+   DESIGN SYSTEM — TOKENS FLUIDOS
+   Regras inegociáveis:
+   - Display (títulos gigantes): vw puro, sem teto. Escala até 4K.
+   - Body (texto de leitura): min 14px (WCAG). Escala com a tela.
+   - Touch targets: min 44px (WCAG). Escala com a tela.
+   - Container: cresce até 1600px, depois trava. Evita linha ilegível em 4K.
+   ============================================================ */
 @theme {
+  /* Cores */
   --color-cream: #ede6d8;
   --color-navy: #0b1f3a;
+
+  /* Fontes */
   --font-anton: 'Anton', sans-serif;
   --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Radius */
   --radius-brand: 30px;
+
+  /* Animações (marquee CSS) */
   --animate-marquee-left: marquee-left 40s linear infinite;
   --animate-marquee-right: marquee-right 40s linear infinite;
+
+  /* -------------------------------------------------------
+     ESCALAS DE TEXTO
+     ------------------------------------------------------- */
+
+  /* Display — sem teto (vw puro) */
+  --text-hero: 16vw;              /* PORTFÓLIO */
+  --text-numeral-xl: 10vw;        /* +R$ 4 mi, -53%, +33 */
+  --text-numeral-lg: 6vw;         /* números de stat (Destaques) */
+  --text-display: 5vw;            /* títulos de case, VAMOS CONSTRUIR */
+
+  /* Títulos — floor de 28px pra não virar ameba em 320px */
+  --text-h2: max(1.75rem, 3.5vw);
+  --text-h3: max(1.25rem, 2vw);
+  --text-h4: max(1.0625rem, 1.4vw);
+
+  /* Body — floor de 14px (WCAG) */
+  --text-body: max(0.875rem, 1vw);
+  --text-body-lg: max(1rem, 1.25vw);
+  --text-small: max(0.75rem, 0.85vw);
+  --text-tiny: max(0.6875rem, 0.7vw);
+
+  /* -------------------------------------------------------
+     ESPAÇAMENTO FLUIDO
+     ------------------------------------------------------- */
+  --spacing-fluid-section: max(4rem, 7vw);      /* py de seção */
+  --spacing-fluid-gap: max(0.75rem, 1.2vw);     /* gap entre cards */
+  --spacing-fluid-gap-lg: max(1rem, 1.6vw);     /* gap entre colunas */
+  --spacing-fluid-pad: max(1.25rem, 2vw);       /* padding interno de card */
+  --spacing-fluid-pad-lg: max(1.5rem, 2.5vw);   /* padding de seção */
+
+  /* -------------------------------------------------------
+     LAYOUT
+     ------------------------------------------------------- */
+  --container-fluid: min(92vw, 1600px);
+  --container-fluid-narrow: min(88vw, 1080px);
+  --container-fluid-wide: min(95vw, 1920px);
+
+  /* Touch target mínimo WCAG */
+  --spacing-touch: max(2.75rem, 3.5vw);  /* ≥ 44px */
 }
 
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  html {
+    background: var(--color-cream);
+    color: var(--color-navy);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: auto;
+  }
+
+  body {
+    /* svh = small viewport height — corrige 100vh no mobile iOS/Android */
+    min-height: 100svh;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    overflow-x: hidden; /* segurança contra elementos fora da tela */
+  }
+
+  /* Grão sutil global */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.045;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Focus visível global */
+  :focus-visible {
+    outline: 2px solid var(--color-navy);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  /* Headings herdam hierarquia mas não estouram */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  /* Imagens nunca maiores que o container */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevenção de overflow horizontal (evita scroll horizontal acidental) */
+  * {
+    min-width: 0;
+  }
+}
+
+/* ============================================================
+   UTILITÁRIOS FLUIDOS
+   ============================================================ */
+
+/* Container principal — cresce até 1600px em Full HD/2K */
+@utility container-fluid {
+  width: var(--container-fluid);
+  margin-inline: auto;
+}
+
+/* Container estreito — para texto longo (65-80ch) */
+@utility container-narrow {
+  width: var(--container-narrow);
+  margin-inline: auto;
+  max-width: 65ch; /* WCAG: 65 caracteres por linha */
+}
+
+/* Container wide — para grids grandes */
+@utility container-wide {
+  width: var(--container-wide);
+  margin-inline: auto;
+}
+
+/* Altura de tela que funciona no iOS (svh) */
+@utility h-screen-safe {
+  height: 100svh;
+  min-height: 100svh;
+}
+
+/* Padding de seção fluido */
+@utility section-pad {
+  padding-block: var(--spacing-section);
+}
+
+/* Padding interno de card fluido */
+@utility card-pad {
+  padding: var(--spacing-pad);
+}
+
+/* Touch target mínimo — para botões */
+@utility touch-target {
+  min-height: var(--spacing-touch);
+  min-width: var(--spacing-touch);
+}
+
+/* ============================================================
+   NOTEBOOK BAIXO — altura < 900px (ex: 1366×768, 1440×810)
+   Ajustes que compensam a falta de altura
+   ============================================================ */
+@media (max-height: 900px) and (min-width: 768px) {
+  :root {
+    /* Reduz PORTFÓLIO em notebooks baixos — evita ocupar toda a tela */
+    --text-hero: 12vw;
+    --spacing-section: max(3rem, 5vw);
+  }
+}
+
+/* ============================================================
+   MOBILE PEQUENO — largura < 375px (iPhone SE, Galaxy A03)
+   ============================================================ */
+@media (max-width: 374px) {
+  :root {
+    --text-body: 0.875rem;
+    --text-h2: 1.5rem;
+  }
+}
+
+/* ============================================================
+   ULTRAWIDE — largura > 1920px (4K, monitores grandes)
+   Trava container para não esticar linha demais
+   ============================================================ */
+@media (min-width: 1920px) {
+  :root {
+    --container-fluid: min(88vw, 1920px);
+    --container-narrow: min(80vw, 1400px);
+  }
+}
+
+/* ============================================================
+   ANIMAÇÕES
+   ============================================================ */
 @keyframes marquee-left {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
@@ -22,37 +215,27 @@
   to   { transform: translateX(0); }
 }
 
-html {
-  background: var(--color-cream);
-  color: var(--color-navy);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* grão sutil global */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.045;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
+/* ============================================================
+   ACESSIBILIDADE — REDUCED MOTION
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+    will-change: auto !important;
   }
 }
 
-/* foco visível acessível em todo lugar */
-:focus-visible {
-  outline: 2px solid var(--color-navy);
-  outline-offset: 4px;
-  border-radius: 4px;
+/* ============================================================
+   PRINT — esconde elementos decorativos ao imprimir CV
+   ============================================================ */
+@media print {
+  html, body {
+    background: white !important;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
 }

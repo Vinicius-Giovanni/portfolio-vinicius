@@ -1,5 +1,6 @@
 import { useRef, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
+import { useNavigate } from '@tanstack/react-router'
 import {
   SiPython,
   SiDatabricks,
@@ -9,9 +10,8 @@ import {
   SiHtml5,
 } from 'react-icons/si'
 import { BarChart3, Bot } from 'lucide-react'
-import { HeroCanvas } from '@/components/three/HeroCanvas'
+import { HeroCssParticles } from '@/components/sections/HeroCssParticles'
 import { cn } from '@/lib/utils'
-import { useNavigate } from '@tanstack/react-router'
 
 function scrollToId(id: string) {
   const target = document.querySelector(id)
@@ -24,20 +24,20 @@ function scrollToId(id: string) {
 }
 
 const WORD_STYLE = {
-  fontSize: 'clamp(3rem, 19vw, 25rem)',
+  fontSize: 'clamp(2rem, 17.5vw, 25rem)',
   lineHeight: 0.85,
   letterSpacing: '-0.02em',
 } as const
 
 const FLOATING_TECHS = [
-  { Icon: SiPython, pos: 'top-[22%] left-[6%]', delay: 0 },
-  { Icon: SiDatabricks, pos: 'top-[17%] right-[8%]', delay: 0.3 },
-  { Icon: SiJavascript, pos: 'top-[40%] left-[3%]', delay: 0.6 },
-  { Icon: SiTypescript, pos: 'top-[43%] right-[4%]', delay: 0.9 },
-  { Icon: SiCss, pos: 'bottom-[40%] left-[7%]', delay: 1.2 },
-  { Icon: BarChart3, pos: 'bottom-[42%] right-[6%]', delay: 1.5 },
-  { Icon: Bot, pos: 'bottom-[28%] left-[14%]', delay: 1.8 },
-  { Icon: SiHtml5, pos: 'bottom-[30%] right-[13%]', delay: 2.1 },
+  { Icon: SiPython, pos: 'top-[16%] left-[5%]', delay: 0, hideOnMobile: false },
+  { Icon: SiDatabricks, pos: 'top-[14%] right-[7%]', delay: 0.3, hideOnMobile: false },
+  { Icon: SiJavascript, pos: 'top-[42%] left-[2%]', delay: 0.6, hideOnMobile: true },
+  { Icon: SiTypescript, pos: 'top-[45%] right-[3%]', delay: 0.9, hideOnMobile: true },
+  { Icon: SiCss, pos: 'bottom-[42%] left-[6%]', delay: 1.2, hideOnMobile: true },
+  { Icon: BarChart3, pos: 'bottom-[44%] right-[5%]', delay: 1.5, hideOnMobile: false },
+  { Icon: Bot, pos: 'bottom-[30%] left-[13%]', delay: 1.8, hideOnMobile: true },
+  { Icon: SiHtml5, pos: 'bottom-[32%] right-[12%]', delay: 2.1, hideOnMobile: true },
 ]
 
 export function Hero() {
@@ -62,12 +62,12 @@ export function Hero() {
     },
     {
       label: 'Ver Projetos →',
-      variant: 'ghost' as const,
+      variant: 'solid' as const,
       onClick: () => navigate({ to: '/projetos' }),
     },
     {
       label: 'Ver Entregáveis →',
-      variant: 'solid' as const,
+      variant: 'ghost' as const,
       onClick: () => scrollToId('#entregaveis'),
     },
     {
@@ -78,8 +78,9 @@ export function Hero() {
   ]
 
   return (
-    <section ref={ref} className="relative h-screen w-full overflow-hidden">
-      <HeroCanvas />
+    <section ref={ref} className="h-screen-safe relative w-full overflow-hidden">
+      {/* Partículas CSS no lugar do Canvas 3D */}
+      <HeroCssParticles />
 
       {!reduced && (
         <motion.div
@@ -93,7 +94,7 @@ export function Hero() {
         />
       )}
 
-      {/* Camada 2 — PORTFÓLIO fill */}
+      {/* Camada 1 — PORTFÓLIO fill */}
       <motion.div
         style={{ y: yText, opacity: fade }}
         className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center pt-[18vh] md:items-center md:pt-0"
@@ -104,35 +105,39 @@ export function Hero() {
       </motion.div>
 
       {/* Ícones tech flutuantes */}
-      {FLOATING_TECHS.map(({ Icon, pos, delay }, i) => (
+      {FLOATING_TECHS.map(({ Icon, pos, delay, hideOnMobile }, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0, scale: 0.4 }}
           animate={{ opacity: 0.9, scale: 1 }}
           transition={{ duration: 0.8, delay: 1 + i * 0.12 }}
-          className={cn('pointer-events-none absolute z-[15]', pos)}
+          className={cn(
+            'pointer-events-none absolute z-[15]',
+            pos,
+            hideOnMobile && 'hidden md:block',
+          )}
         >
           <motion.div
             animate={reduced ? undefined : { y: [0, -14, 0], rotate: [0, 6, 0] }}
             transition={{ duration: 4 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay }}
-            className="border-navy/10 bg-cream/75 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-[0_8px_24px_rgba(11,31,58,0.14)] backdrop-blur-md md:h-14 md:w-14"
+            className="border-navy/10 bg-cream/75 flex h-11 w-11 items-center justify-center rounded-2xl border shadow-[0_8px_24px_rgba(11,31,58,0.14)] backdrop-blur-md md:h-12 md:w-12 xl:h-14 xl:w-14"
           >
-            <Icon className="text-navy h-6 w-6 md:h-7 md:w-7" aria-hidden />
+            <Icon className="text-navy h-5 w-5 md:h-6 md:w-6 xl:h-7 xl:w-7" aria-hidden />
           </motion.div>
         </motion.div>
       ))}
 
-      {/* Camada 4 — foto */}
+      {/* Foto */}
       <motion.img
         src="/assets/vinicius-hero.png"
         alt="Vinícius G Pereira"
         style={{ y: yPhoto }}
-        className="pointer-events-none absolute bottom-0 left-1/2 z-20 h-[72%] max-w-none -translate-x-1/2 object-contain md:h-[90%]"
+        className="pointer-events-none absolute bottom-0 left-1/2 z-20 h-[78%] max-w-none -translate-x-1/2 object-contain md:h-[85%] xl:h-[88%]"
         draggable={false}
         fetchPriority="high"
       />
 
-      {/* Camada 5 — PORTFÓLIO stroke */}
+      {/* Camada 3 — PORTFÓLIO stroke */}
       <motion.div
         style={{ y: yText, opacity: fade }}
         aria-hidden
@@ -151,18 +156,24 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-6 left-5 z-40 md:top-8 md:left-10"
+        className="absolute top-[max(1.5rem,4vh)] left-[max(1.25rem,3vw)] z-40"
       >
-        <p className="text-navy text-[clamp(0.875rem,1.2vw,1.125rem)] font-bold tracking-tight">
+        <p
+          className="text-navy font-bold tracking-tight"
+          style={{ fontSize: 'max(0.875rem, 1.1vw)' }}
+        >
           Vinícius G Pereira
         </p>
-        <p className="text-navy/60 mt-1 text-[clamp(0.75rem,0.95vw,0.9rem)] font-medium">
+        <p
+          className="text-navy/60 mt-1 font-medium"
+          style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+        >
           Engenharia de Software &amp; Dados
         </p>
       </motion.div>
 
       {/* Botões */}
-      <div className="absolute bottom-6 left-1/2 z-40 flex w-[min(92%,960px)] -translate-x-1/2 flex-col items-stretch gap-2.5 sm:grid sm:grid-cols-2 sm:gap-3 md:bottom-10 md:grid-cols-4">
+      <div className="absolute bottom-[max(1.5rem,4vh)] left-1/2 z-40 flex w-[min(92%,1200px)] -translate-x-1/2 flex-col items-stretch gap-2.5 sm:grid sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
         {buttons.map((btn, i) => (
           <HeroButton
             key={btn.label}
@@ -206,8 +217,9 @@ function HeroButton({ variant, onClick, delay, children }: HeroButtonProps) {
         transition: { duration: 0.1, delay: 0 },
       }}
       onClick={onClick}
+      style={{ fontSize: 'max(0.875rem, 0.95vw)' }}
       className={cn(
-        'rounded-brand px-4 py-3 text-center text-[clamp(0.8rem,0.9vw,1rem)] font-bold whitespace-nowrap',
+        'rounded-brand flex min-h-11 items-center justify-center px-4 py-3 text-center font-bold whitespace-nowrap md:min-h-12 md:px-5',
         variant === 'solid' ? 'bg-navy text-cream' : 'bg-cream text-navy border-navy border',
       )}
     >

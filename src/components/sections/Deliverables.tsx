@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, type ReactNode } from 'react'
+import { useRef, useState, useEffect, lazy, type ReactNode } from 'react'
 import {
   motion,
   useScroll,
@@ -6,23 +6,23 @@ import {
   useMotionValueEvent,
   useReducedMotion,
 } from 'motion/react'
-import { ArrowDown, ArrowUpRight } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
-import { AnimatePresence } from 'motion/react'
+import { ArrowDown } from 'lucide-react'
 import { CountUp } from '@/components/ui/CountUp'
 import { Typewriter } from '@/components/ui/Typewriter'
 import { FlowDiagram } from '@/components/ui/FlowDiagram'
 import { DepthLayers } from '@/components/ui/DepthLayers'
-import { PanelCanvas } from '@/components/three/PanelCanvas'
-import { FinancialScene } from '@/components/three/scenes/FinancialScene'
-import { DeliveriesScene } from '@/components/three/scenes/DeliveriesScene'
+import { LazyThree } from '@/components/three/LazyThree'
 import { cn } from '@/lib/utils'
 
-const CARD_TITLES = [
-  'Impacto Financeiro',
-  'Eficiência Operacional',
-  'Entregas Software & BI',
-]
+const PanelCanvas = lazy(() =>
+  import('@/components/three/PanelCanvas').then((m) => ({ default: m.PanelCanvas })),
+)
+const FinancialScene = lazy(() =>
+  import('@/components/three/scenes/FinancialScene').then((m) => ({ default: m.FinancialScene })),
+)
+const DeliveriesScene = lazy(() =>
+  import('@/components/three/scenes/DeliveriesScene').then((m) => ({ default: m.DeliveriesScene })),
+)
 
 export function Deliverables() {
   const ref = useRef<HTMLElement>(null)
@@ -33,42 +33,46 @@ export function Deliverables() {
   })
   const x = useTransform(scrollYProgress, [0, 1], ['0%', '-66.666%'])
   const [active, setActive] = useState(0)
-  const [engaged, setEngaged] = useState(false)
 
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const next = v < 0.33 ? 0 : v < 0.66 ? 1 : 2
     if (next !== active) setActive(next)
-      setEngaged(v > 0)
   })
 
   return (
-    <section id="entregaveis" ref={ref} className="relative h-[380vh]" data-snap="multi" data-snap-intervals="3">
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+    <section
+      id="entregaveis"
+      ref={ref}
+      className="relative h-[380vh]"
+      data-snap="multi"
+      data-snap-intervals="3"
+    >
+      <div className="h-screen-safe sticky top-0 w-full overflow-hidden">
         <motion.div style={{ x: reduced ? 0 : x }} className="flex h-full w-[300vw]">
           <PanelImpact isActive={active === 0} />
           <PanelOperations isActive={active === 1} />
           <PanelDeliveries isActive={active === 2} />
         </motion.div>
 
-        {/* Label esquerda — dinâmico: ENTREGÁVEIS → título do card quando engajado */}
-        <div className="pointer-events-none absolute top-16 left-5 z-30 md:top-16 md:left-10">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={engaged ? `title-${active}` : 'section-label'}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className={`inline-block text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs ${
-                active === 1 ? 'text-navy/60' : 'text-cream/60'
-              }`}
-            >
-              {engaged ? CARD_TITLES[active] : 'ENTREGÁVEIS'}
-            </motion.span>
-          </AnimatePresence>
+        <div
+          className="pointer-events-none absolute left-[max(1.25rem,3vw)] z-30"
+          style={{ top: 'max(4.25rem, 6.5vh)' }}
+        >
+          <span
+            className={cn(
+              'inline-block font-bold tracking-[0.3em] uppercase transition-colors duration-500',
+              active === 1 ? 'text-navy/60' : 'text-cream/60',
+            )}
+            style={{ fontSize: 'max(0.625rem, 0.8vw)' }}
+          >
+            ENTREGÁVEIS
+          </span>
         </div>
 
-        <div className="pointer-events-none absolute bottom-5 left-1/2 z-30 -translate-x-1/2 md:bottom-10">
+        <div
+          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
+          style={{ bottom: 'max(1.25rem, 3vh)' }}
+        >
           <div className="flex items-center gap-2 rounded-full bg-black/40 px-4 py-2.5 backdrop-blur-md">
             {[0, 1, 2].map((i) => (
               <div
@@ -81,34 +85,13 @@ export function Deliverables() {
             ))}
           </div>
         </div>
-
-        {/* CTA — aparece apenas no último painel */}
-        <AnimatePresence>
-          {active === 2 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute right-4 bottom-20 z-40 md:right-10 md:bottom-24"
-            >
-              <Link
-                to="/projetos"
-                className="border-cream/20 bg-navy/60 text-cream hover:border-cream/50 hover:bg-navy/80 pointer-events-auto inline-flex items-center gap-2 rounded-full border px-5 py-3 text-xs font-bold backdrop-blur-md transition-colors"
-              >
-                Ver os 4 dossiês
-                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-              </Link>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </section>
   )
 }
 
 // ============================================
-// PAINEL 1 · IMPACTO FINANCEIRO — Cofre centralizado no mobile
+// PAINEL 1 · IMPACTO FINANCEIRO
 // ============================================
 function PanelImpact({ isActive }: { isActive: boolean }) {
   const reduced = useReducedMotion()
@@ -122,37 +105,43 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
   }, [])
 
   return (
-    <div className="relative isolate flex h-full w-screen shrink-0 items-center justify-center overflow-hidden bg-[#0B1F3A] px-4 md:px-16">
-      {/* Fundo radial navy */}
+    <div className="relative isolate flex h-full w-screen shrink-0 items-center justify-center overflow-hidden bg-[#0B1F3A]">
       <div
         className="absolute inset-0 z-0"
         aria-hidden
         style={{ background: 'radial-gradient(circle at 20% 30%, #1a2f4f 0%, #0B1F3A 60%)' }}
       />
 
-      {/* Camadas de profundidade */}
       <div className="absolute inset-0 z-[1]">
         <DepthLayers variant="navy" />
       </div>
 
-      {/* Canvas 3D — cofre */}
+      {/* LazyThree: só monta o Canvas quando a seção estiver próxima */}
       <div className="absolute inset-0 z-[2]">
-        <PanelCanvas
-          isActive={isActive}
-          cameraPosition={[0, -0.25, 5.5]}
-          envPreset="studio"
-        >
-          <FinancialScene isActive={isActive} isVisible={isActive} isMobile={isMobile} />
-        </PanelCanvas>
+        <LazyThree rootMargin="300px" fallback={null}>
+          <PanelCanvas isActive={isActive} cameraPosition={[0, -0.25, 5.5]} envPreset="studio">
+            <FinancialScene isActive={isActive} isVisible={isActive} isMobile={isMobile} />
+          </PanelCanvas>
+        </LazyThree>
       </div>
 
-      {/* Conteúdo HTML */}
-      <div className="relative z-10 grid w-full max-w-7xl items-center gap-6 md:grid-cols-12 md:gap-12">
-        <div className="md:col-span-7">
-
-          <div className="mt-4 md:mt-5">
+      <div
+        className="relative z-10 grid w-full items-center xl:grid-cols-[3fr_2fr]"
+        style={{
+          maxWidth: 'min(94vw, 1600px)',
+          paddingInline: 'max(1rem, 4vw)',
+          paddingTop: 'max(6.5rem, 13vh)',
+          paddingBottom: 'max(5rem, 10vh)',
+          gap: 'max(1.5rem, 3vw)',
+        }}
+      >
+        <div>
+          <div>
             <GlowNumber isActive={isActive}>
-              <div className="font-anton text-cream text-[clamp(2.5rem,10vw,10rem)] leading-[0.85] tracking-tight">
+              <div
+                className="font-anton text-cream leading-[0.85] tracking-tight"
+                style={{ fontSize: 'var(--text-numeral-xl)' }}
+              >
                 <CountUp to={4} prefix="+R$ " suffix=" mi" resetKey={isActive} duration={2.2} />
               </div>
             </GlowNumber>
@@ -169,7 +158,8 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
             initial={{ opacity: 0, y: 10 }}
             animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-cream/75 mt-3 max-w-md text-xs md:mt-5 md:text-base"
+            className="text-cream/75 mt-3 max-w-md leading-snug"
+            style={{ fontSize: 'var(--text-body)' }}
           >
             <Typewriter
               text="de economia anual com dados, automação e IA"
@@ -178,26 +168,45 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
             />
           </motion.p>
 
-          <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2 md:mt-8 md:gap-3">
+          <div
+            className="mt-5 grid grid-cols-1 lg:grid-cols-2 md:mt-7"
+            style={{ gap: 'var(--spacing-fluid-gap)' }}
+          >
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border p-3 backdrop-blur-md transition-colors md:p-4"
+              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border backdrop-blur-md transition-colors"
+              style={{ padding: 'max(0.875rem, 1.4vw)' }}
             >
-              <div className="text-cream text-xl font-bold md:text-2xl">
+              <div
+                className="text-cream font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+              >
                 <CountUp to={3} prefix="~R$ " suffix=" mi" resetKey={isActive} duration={1.8} />
               </div>
-              <p className="text-cream/60 mt-1 text-[9px] font-bold tracking-[0.15em] uppercase md:text-[10px]">
+              <p
+                className="text-cream/60 mt-1 font-bold tracking-[0.15em] uppercase"
+                style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+              >
                 Dados &amp; B.I
               </p>
-              <p className="text-cream/85 mt-1.5 text-[11px] leading-snug md:mt-2 md:text-xs">
+              <p
+                className="text-cream/85 mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+              >
                 Otimização de operação logística em grande varejista nacional
               </p>
-              <p className="text-cream mt-1 text-[11px] font-bold leading-snug md:mt-1.5 md:text-xs">
+              <p
+                className="text-cream mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+              >
                 -23% de frota, mantendo 100% do atendimento
               </p>
-              <p className="text-cream/55 mt-1 text-[9px] leading-snug md:mt-1.5 md:text-[10px]">
+              <p
+                className="text-cream/55 mt-1 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+              >
                 Liderei a análise e a ponte entre áreas
               </p>
             </motion.div>
@@ -206,21 +215,37 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border p-3 backdrop-blur-md transition-colors md:p-4"
+              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border backdrop-blur-md transition-colors"
+              style={{ padding: 'max(0.875rem, 1.4vw)' }}
             >
-              <div className="text-cream text-xl font-bold md:text-2xl">
+              <div
+                className="text-cream font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+              >
                 <CountUp to={1.5} prefix="~R$ " suffix=" mi" resetKey={isActive} duration={1.8} />
               </div>
-              <p className="text-cream/60 mt-1 text-[9px] font-bold tracking-[0.15em] uppercase md:text-[10px]">
+              <p
+                className="text-cream/60 mt-1 font-bold tracking-[0.15em] uppercase"
+                style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+              >
                 Automação RPA
               </p>
-              <p className="text-cream/85 mt-1.5 text-[11px] leading-snug md:mt-2 md:text-xs">
+              <p
+                className="text-cream/85 mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+              >
                 Automação de rotinas administrativas em diversas operações
               </p>
-              <p className="text-cream mt-1 text-[11px] font-bold leading-snug md:mt-1.5 md:text-xs">
+              <p
+                className="text-cream mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+              >
                 1h → &lt;5min por processo (-92%)
               </p>
-              <p className="text-cream/55 mt-1 text-[9px] leading-snug md:mt-1.5 md:text-[10px]">
+              <p
+                className="text-cream/55 mt-1 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+              >
                 Desenvolvi as automações ponta a ponta
               </p>
             </motion.div>
@@ -230,42 +255,29 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
             initial={{ opacity: 0 }}
             animate={isActive ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.6, delay: 1.6 }}
-            className="text-cream/40 mt-3 text-[10px] leading-relaxed md:mt-4 md:text-[11px]"
+            className="text-cream/40 mt-3 leading-relaxed md:mt-4"
+            style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
           >
             Cálculo: gasto evitado com prestadores + ganhos de otimização + perdas de produto
             evitadas.
           </motion.p>
         </div>
 
-        <div className="hidden md:col-span-5 md:flex md:items-end md:justify-end">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="text-right"
-          >
-            <p className="text-cream/40 text-[10px] font-bold tracking-[0.25em] uppercase">
-              Acúmulo de valor
-            </p>
-            <p className="text-cream/70 mt-1 max-w-[180px] text-xs">
-              Cada camada é uma fonte real de economia
-            </p>
-          </motion.div>
-        </div>
+        <div className="hidden xl:block" />
       </div>
     </div>
   )
 }
 
 // ============================================
-// PAINEL 2 · EFICIÊNCIA OPERACIONAL — FlowDiagram menor no mobile
+// PAINEL 2 · EFICIÊNCIA OPERACIONAL
 // ============================================
 function PanelOperations({ isActive }: { isActive: boolean }) {
   const reduced = useReducedMotion()
 
   return (
-    <div className="bg-cream relative flex h-full w-screen shrink-0 items-start justify-center overflow-hidden px-4 pt-20 md:items-center md:px-16 md:pt-0">
-      <div className="absolute inset-0 -z-10" aria-hidden>
+    <div className="bg-cream relative flex h-full w-screen shrink-0 items-start justify-center overflow-hidden md:items-center">
+      <div className="absolute inset-0 z-0" aria-hidden>
         <motion.div
           animate={reduced ? undefined : { x: [0, 60, 0], y: [0, -30, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
@@ -284,11 +296,22 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
         />
       </div>
 
-      <div className="relative z-10 grid w-full max-w-7xl items-center gap-6 md:grid-cols-12 md:gap-12">
-        <div className="md:col-span-7">
-
-          <div className="mt-4 flex items-end gap-3 md:mt-5 md:gap-4">
-            <div className="font-anton text-navy text-[clamp(2.5rem,10vw,10rem)] leading-[0.85] tracking-tight">
+      <div
+        className="relative z-10 grid w-full items-start lg:grid-cols-12 md:items-center"
+        style={{
+          maxWidth: 'min(94vw, 1600px)',
+          paddingInline: 'max(1rem, 4vw)',
+          paddingTop: 'max(8rem, 15vh)',
+          paddingBottom: 'max(5rem, 10vh)',
+          gap: 'max(1.5rem, 3vw)',
+        }}
+      >
+        <div className="lg:col-span-7">
+          <div className="flex items-end" style={{ gap: 'max(0.75rem, 1.5vw)' }}>
+            <div
+              className="font-anton text-navy leading-[0.85] tracking-tight"
+              style={{ fontSize: 'var(--text-numeral-xl)' }}
+            >
               <CountUp to={53} prefix="-" suffix="%" resetKey={isActive} duration={2.2} />
             </div>
             <motion.div
@@ -300,7 +323,10 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
                 animate={reduced || !isActive ? undefined : { y: [0, 8, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <ArrowDown className="text-navy mb-2 h-6 w-6 md:mb-4 md:h-12 md:w-12" aria-hidden />
+                <ArrowDown
+                  className="text-navy mb-1 h-5 w-5 md:mb-3 md:h-8 md:w-8 xl:h-10 xl:w-10"
+                  aria-hidden
+                />
               </motion.div>
             </motion.div>
           </div>
@@ -309,14 +335,15 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
             initial={{ scaleX: 0 }}
             animate={isActive ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 0.9, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-navy/15 mt-3 h-px w-full max-w-md origin-left md:mt-4"
+            className="bg-navy/15 mt-2 h-px w-full max-w-md origin-left md:mt-3"
           />
 
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-navy/75 mt-3 max-w-md text-xs md:mt-5 md:text-base"
+            className="text-navy/75 mt-2 max-w-md leading-snug md:mt-3"
+            style={{ fontSize: 'var(--text-body)' }}
           >
             <Typewriter
               text="de economia média de tempo em rotinas operacionais manuais"
@@ -325,21 +352,36 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
             />
           </motion.p>
 
-          <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2 md:mt-8 md:gap-3">
+          <div
+            className="mt-4 grid grid-cols-1 lg:grid-cols-2 md:mt-5"
+            style={{ gap: 'max(0.5rem, 1vw)' }}
+          >
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="border-navy/15 bg-cream/70 rounded-2xl border p-3 backdrop-blur-md md:p-4"
+              className="border-navy/15 bg-cream/70 rounded-2xl border backdrop-blur-md"
+              style={{ padding: 'max(0.75rem, 1.2vw)' }}
             >
-              <p className="text-navy text-xs font-bold md:text-sm">Autonomia</p>
-              <p className="text-navy/85 mt-1 text-[11px] leading-snug md:mt-1.5 md:text-xs">
+              <p className="text-navy font-bold" style={{ fontSize: 'max(0.8125rem, 1vw)' }}>
+                Autonomia
+              </p>
+              <p
+                className="text-navy/85 mt-1 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.8vw)' }}
+              >
                 O robô executa as regras de negócio, o humano só entra nas exceções
               </p>
-              <p className="text-navy mt-1 text-[11px] font-bold leading-snug md:mt-1.5 md:text-xs">
+              <p
+                className="text-navy mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.8vw)' }}
+              >
                 Regras automatizadas, exceções mantidas com pessoas
               </p>
-              <p className="text-navy/55 mt-1 text-[9px] leading-snug md:mt-1.5 md:text-[10px]">
+              <p
+                className="text-navy/55 mt-1 leading-snug"
+                style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+              >
                 Mapeei as regras e desenhei o que o robô decide e o que vai para o humano
               </p>
             </motion.div>
@@ -348,16 +390,28 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
-              className="border-navy/15 bg-cream/70 rounded-2xl border p-3 backdrop-blur-md md:p-4"
+              className="border-navy/15 bg-cream/70 rounded-2xl border backdrop-blur-md"
+              style={{ padding: 'max(0.75rem, 1.2vw)' }}
             >
-              <p className="text-navy text-xs font-bold md:text-sm">Velocidade</p>
-              <p className="text-navy/85 mt-1 text-[11px] leading-snug md:mt-1.5 md:text-xs">
+              <p className="text-navy font-bold" style={{ fontSize: 'max(0.8125rem, 1vw)' }}>
+                Velocidade
+              </p>
+              <p
+                className="text-navy/85 mt-1 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.8vw)' }}
+              >
                 Processos que levavam horas passando a rodar em minutos
               </p>
-              <p className="text-navy mt-1 text-[11px] font-bold leading-snug md:mt-1.5 md:text-xs">
+              <p
+                className="text-navy mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.8vw)' }}
+              >
                 1h → &lt;5min por processo no melhor caso (-92%)
               </p>
-              <p className="text-navy/55 mt-1 text-[9px] leading-snug md:mt-1.5 md:text-[10px]">
+              <p
+                className="text-navy/55 mt-1 leading-snug"
+                style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+              >
                 Desenvolvi e implantei as automações
               </p>
             </motion.div>
@@ -367,16 +421,16 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
             initial={{ opacity: 0 }}
             animate={isActive ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.6, delay: 1.6 }}
-            className="text-navy/50 mt-3 text-[10px] leading-relaxed md:mt-4 md:text-[11px]"
+            className="text-navy/50 mt-2 hidden leading-relaxed md:mt-3 md:block"
+            style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
           >
             Cálculo: média da redução de tempo por processo, comparando a execução manual com a
             automatizada.
           </motion.p>
         </div>
 
-        {/* FlowDiagram — escala reduzida no mobile */}
-        <div className="md:col-span-5">
-          <div className="origin-top scale-[0.75] md:scale-100">
+        <div className="lg:col-span-5">
+          <div className="mx-auto w-full origin-top scale-[0.55] md:scale-[0.8] lg:scale-100">
             <FlowDiagram isActive={isActive} />
           </div>
         </div>
@@ -386,36 +440,54 @@ function PanelOperations({ isActive }: { isActive: boolean }) {
 }
 
 // ============================================
-// PAINEL 3 · ENTREGAS — Cards empilhados no mobile
+// PAINEL 3 · ENTREGAS
 // ============================================
 function PanelDeliveries({ isActive }: { isActive: boolean }) {
   const reduced = useReducedMotion()
 
   return (
-    <div className="relative flex h-full w-screen shrink-0 items-start justify-center overflow-hidden px-4 pt-20 md:items-center md:px-16 md:pt-0">
-      <div className="absolute inset-0 -z-20" aria-hidden>
+    <div className="relative flex h-full w-screen shrink-0 items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0" aria-hidden>
         <div
           className="absolute inset-0"
           style={{ background: 'radial-gradient(circle at 80% 50%, #1a2f4f 0%, #0B1F3A 60%)' }}
         />
       </div>
 
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 z-[1]">
         <DepthLayers variant="navy" />
       </div>
 
-      <div className="absolute inset-0 z-0">
-        <PanelCanvas isActive={isActive} cameraPosition={[0, 0, 7]} envPreset="city">
-          <DeliveriesScene />
-        </PanelCanvas>
+      <div className="absolute inset-0 z-[2] opacity-45 md:opacity-75 xl:opacity-100">
+        <LazyThree rootMargin="300px" fallback={null}>
+          <PanelCanvas isActive={isActive} cameraPosition={[0, 0, 7]} envPreset="city">
+            <DeliveriesScene />
+          </PanelCanvas>
+        </LazyThree>
       </div>
 
-      <div className="relative z-10 grid w-full max-w-7xl items-center gap-6 md:grid-cols-12 md:gap-12">
-        <div className="md:col-span-7">
+      <div
+        className="pointer-events-none absolute inset-0 z-[3] bg-navy/30 md:bg-transparent"
+        aria-hidden
+      />
 
-          <div className="mt-4 md:mt-5">
+      <div
+        className="relative z-10 grid w-full items-start lg:grid-cols-12 md:items-center"
+        style={{
+          maxWidth: 'min(94vw, 1600px)',
+          paddingInline: 'max(1rem, 4vw)',
+          paddingTop: 'max(7rem, 14vh)',
+          paddingBottom: 'max(5rem, 10vh)',
+          gap: 'max(1.5rem, 3vw)',
+        }}
+      >
+        <div className="lg:col-span-7">
+          <div>
             <GlowNumber isActive={isActive}>
-              <div className="font-anton text-cream text-[clamp(2.5rem,10vw,10rem)] leading-[0.85] tracking-tight">
+              <div
+                className="font-anton text-cream leading-[0.85] tracking-tight"
+                style={{ fontSize: 'var(--text-numeral-xl)' }}
+              >
                 <CountUp to={33} prefix="+" resetKey={isActive} duration={2.2} />
               </div>
             </GlowNumber>
@@ -425,14 +497,15 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
             initial={{ scaleX: 0 }}
             animate={isActive ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 0.9, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-cream/15 mt-3 h-px w-full max-w-md origin-left md:mt-4"
+            className="bg-cream/15 mt-2 h-px w-full max-w-md origin-left md:mt-3"
           />
 
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-cream/75 mt-3 max-w-md text-xs md:mt-5 md:text-base"
+            className="text-cream/90 mt-2 max-w-md leading-snug md:mt-3"
+            style={{ fontSize: 'var(--text-body)' }}
           >
             <Typewriter
               text="soluções sob medida entregues, de automações a dashboards"
@@ -441,28 +514,41 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
             />
           </motion.p>
 
-          {/* Cards — empilhados no mobile, lado a lado no desktop */}
-          <div className="mt-50 grid grid-cols-1 gap-2 md:mt-10 md:grid-cols-2 md:gap-3">
+          <div
+            className="mt-10 grid grid-cols-1 lg:grid-cols-2 md:mt-12"
+            style={{ gap: 'var(--spacing-fluid-gap)' }}
+          >
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border p-3 backdrop-blur-md md:p-4"
+              className="border-cream/15 bg-navy/40 rounded-2xl border backdrop-blur-lg"
+              style={{ padding: 'max(0.875rem, 1.4vw)' }}
             >
-              <div className="text-cream text-xl font-bold md:text-2xl">
+              <div
+                className="text-cream font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+              >
                 <CountUp to={14} prefix="+" resetKey={isActive} />
               </div>
-              <p className="text-cream mt-1 text-[11px] font-bold leading-snug md:text-xs">
+              <p
+                className="text-cream mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+              >
                 Softwares e automações sob medida
               </p>
-              <p className="text-cream/70 mt-1.5 text-[10px] leading-snug md:mt-2 md:text-[10px]">
+              <p
+                className="text-cream/80 mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+              >
                 +70 usuários ativos e 7 áreas atendidas
               </p>
-              <div className="mt-2 flex flex-wrap gap-1 md:mt-3">
+              <div className="mt-2 flex flex-wrap gap-1">
                 {['Logística', 'Fintechs', 'Advocacia', 'Marketing'].map((t) => (
                   <span
                     key={t}
-                    className="border-cream/20 text-cream/70 rounded-full border px-2 py-0.5 text-[8px] md:text-[9px]"
+                    className="border-cream/25 text-cream/85 rounded-full border px-2 py-0.5"
+                    style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
                   >
                     {t}
                   </span>
@@ -474,23 +560,34 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border p-3 backdrop-blur-md md:p-4"
+              className="border-cream/15 bg-navy/40 rounded-2xl border backdrop-blur-lg"
+              style={{ padding: 'max(0.875rem, 1.4vw)' }}
             >
-              <div className="text-cream text-xl font-bold md:text-2xl">
+              <div
+                className="text-cream font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+              >
                 <CountUp to={19} prefix="+" resetKey={isActive} />
               </div>
-              <p className="text-cream mt-1 text-[11px] font-bold leading-snug md:text-xs">
+              <p
+                className="text-cream mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+              >
                 Projetos de Business Intelligence
               </p>
-              <p className="text-cream/70 mt-1.5 text-[10px] leading-snug md:mt-2 md:text-[10px]">
+              <p
+                className="text-cream/80 mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+              >
                 +27 dashboards, KPIs monitorados e 107 usuários ativos
               </p>
-              <div className="mt-2 flex flex-wrap gap-1 md:mt-3">
+              <div className="mt-2 flex flex-wrap gap-1">
                 {['Power B.I', 'Python', 'Databricks', 'SQL', 'Cloud', 'Power Automate', 'HTML & CSS'].map(
                   (t) => (
                     <span
                       key={t}
-                      className="border-cream/20 text-cream/70 rounded-full border px-2 py-0.5 text-[8px] md:text-[9px]"
+                      className="border-cream/25 text-cream/85 rounded-full border px-2 py-0.5"
+                      style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
                     >
                       {t}
                     </span>
@@ -501,26 +598,15 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
           </div>
         </div>
 
-        <div className="hidden md:col-span-5 md:flex md:items-end md:justify-end">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="text-right"
-          >
-            <p className="text-cream/40 text-[10px] font-bold tracking-[0.25em] uppercase">
-              Portfólio de entregas
-            </p>
-            <p className="text-cream/70 mt-1 max-w-[180px] text-xs">
-              Cada tela é uma solução em produção
-            </p>
-          </motion.div>
-        </div>
+        <div className="hidden lg:block lg:col-span-5" />
       </div>
     </div>
   )
 }
 
+// ============================================
+// COMPONENTE AUXILIAR
+// ============================================
 function GlowNumber({
   children,
   isActive,

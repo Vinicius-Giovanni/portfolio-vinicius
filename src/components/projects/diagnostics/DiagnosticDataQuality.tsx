@@ -1,38 +1,68 @@
-import { useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react'
+import { useRef, useState, useEffect } from 'react'
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  useReducedMotion,
+  type MotionValue,
+} from 'motion/react'
 import { AlertTriangle, CheckCircle2 } from 'lucide-react'
 
-const PLANILHAS = [
-  { num: '2.100', x: -280, y: -140, rot: -8 },
-  { num: '1.750', x: -90, y: -150, rot: 5 },
-  { num: '1.900', x: 100, y: -130, rot: -3 },
-  { num: '1.820', x: 280, y: -145, rot: 7 },
-  { num: '1.640', x: -300, y: -20, rot: -6 },
-  { num: '2.015', x: -100, y: -35, rot: 4 },
-  { num: '1.430', x: 110, y: -25, rot: -5 },
-  { num: '1.980', x: 300, y: -15, rot: 8 },
-  { num: '1.700', x: -290, y: 100, rot: 3 },
-  { num: '1.850', x: -95, y: 110, rot: -7 },
-  { num: '2.040', x: 105, y: 115, rot: 6 },
-  { num: '1.590', x: 295, y: 105, rot: -4 },
-  { num: '1.920', x: -270, y: 215, rot: 5 },
-  { num: '1.680', x: -85, y: 225, rot: -6 },
-  { num: '1.980', x: 120, y: 220, rot: 3 },
-  { num: '1.750', x: 285, y: 210, rot: -8 },
+type Planilha = { num: string; x: number; y: number; rot: number }
+
+const CENTER_CARD = { num: '1.700', rot: -2 }
+
+const OTHERS_DESKTOP: Planilha[] = [
+  { num: '2.100', x: -290, y: -145, rot: -8 },
+  { num: '1.750', x: 0, y: -165, rot: 5 },
+  { num: '1.900', x: 290, y: -145, rot: -3 },
+  { num: '1.640', x: -310, y: 0, rot: -6 },
+  { num: '1.430', x: 310, y: 0, rot: -5 },
+  { num: '1.700', x: -290, y: 145, rot: 3 },
+  { num: '1.850', x: 0, y: 165, rot: -7 },
+  { num: '2.040', x: 290, y: 145, rot: 6 },
+]
+
+const OTHERS_MOBILE: Planilha[] = [
+  { num: '2.100', x: -110, y: -90, rot: -8 },
+  { num: '1.750', x: 0, y: -105, rot: 5 },
+  { num: '1.900', x: 110, y: -90, rot: -3 },
+  { num: '1.640', x: -120, y: 0, rot: -6 },
+  { num: '1.430', x: 120, y: 0, rot: -5 },
+  { num: '1.700', x: -110, y: 90, rot: 3 },
+  { num: '1.850', x: 0, y: 105, rot: -7 },
+  { num: '2.040', x: 110, y: 90, rot: 6 },
 ]
 
 export function DiagnosticDataQuality({ accentColor }: { accentColor: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
   const [phantomCount, setPhantomCount] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  const [showOthers, setShowOthers] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.matchMedia('(max-width: 768px)').matches)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end end'],
   })
 
-  // Ato 1 — Grid de planilhas
-  const gridOpacity = useTransform(scrollYProgress, [0, 0.15, 0.3, 0.4], [0, 1, 1, 0])
+  // Guard: outros cards só entram no DOM quando o scroll passar de 0.03.
+  // Isso garante que no primeiro frame SÓ o card central existe na tela.
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    const next = v > 0.03
+    if (next !== showOthers) setShowOthers(next)
+  })
+
+  // Ato 1 — Grid
+  const gridOpacity = useTransform(scrollYProgress, [0, 0.3, 0.4], [1, 1, 0])
   const gridScale = useTransform(scrollYProgress, [0.3, 0.4], [1, 0.4])
 
   // Ato 2 — Conflito
@@ -49,51 +79,49 @@ export function DiagnosticDataQuality({ accentColor }: { accentColor: string }) 
   })
   const finalPhantom = reduced ? 600 : phantomCount
 
+  const others = isMobile ? OTHERS_MOBILE : OTHERS_DESKTOP
+
   return (
     <section ref={ref} className="relative h-[180vh]">
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden px-4 pt-16">
         <div className="relative w-full max-w-4xl" style={{ minHeight: '70vh' }}>
-          {/* ATO 1: GRID DE PLANILHAS */}
+          {/* ATO 1 — GRID */}
           <motion.div
             style={reduced ? {} : { opacity: gridOpacity, scale: gridScale }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <div className="relative h-[50vh] w-full scale-[0.45] md:h-[60vh] md:scale-100">
-              {PLANILHAS.map((p, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.7 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{
-                    duration: 0.4,
-                    delay: reduced ? 0 : i * 0.03,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  className="border-navy/15 bg-cream/70 absolute rounded-lg border px-3 py-2 shadow-sm backdrop-blur-sm"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px)) rotate(${p.rot}deg)`,
-                  }}
-                >
-                  <div className="flex items-center gap-1.5 pb-1">
-                    <span className="bg-navy/20 h-1 w-1 rounded-full" />
-                    <span className="bg-navy/20 h-1 w-1 rounded-full" />
-                    <span className="bg-navy/20 h-1 w-1 rounded-full" />
-                  </div>
-                  <p className="font-anton text-navy text-sm leading-none md:text-base">
-                    {p.num}
-                  </p>
-                </motion.div>
-              ))}
+            <div className="relative h-[55vh] w-full md:h-[60vh]">
+              {/* Card central "1.700" — único elemento visível no frame 0 */}
+              <CenterCard scrollYProgress={scrollYProgress} reduced={reduced} />
+
+              {/* Outros cards — só montam após scroll > 0.03 */}
+              {showOthers &&
+                others.map((p, i) => (
+                  <PlanilhaCard
+                    key={`${p.num}-${i}`}
+                    planilha={p}
+                    index={i}
+                    total={others.length}
+                    scrollYProgress={scrollYProgress}
+                    reduced={reduced}
+                  />
+                ))}
             </div>
-            <p className="text-navy/50 absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-center font-mono text-[10px] font-bold tracking-[0.2em] uppercase md:bottom-4">
-              Dezenas de planilhas · mesmo indicador
-            </p>
+
+            {/* Texto de contexto — só aparece junto com os outros */}
+            {showOthers && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-navy/50 absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-center font-mono text-[10px] font-bold tracking-[0.2em] uppercase md:bottom-4"
+              >
+                Dezenas de planilhas · mesmo indicador
+              </motion.p>
+            )}
           </motion.div>
 
-          {/* ATO 2: CONFLITO */}
+          {/* ATO 2 — CONFLITO */}
           <motion.div
             style={reduced ? {} : { opacity: conflictOpacity, scale: conflictScale }}
             className="absolute inset-0 flex flex-col items-center justify-center gap-6 md:gap-8"
@@ -135,7 +163,7 @@ export function DiagnosticDataQuality({ accentColor }: { accentColor: string }) 
             </p>
           </motion.div>
 
-          {/* ATO 3: CONVERGÊNCIA */}
+          {/* ATO 3 — CONVERGÊNCIA */}
           <motion.div
             style={reduced ? {} : { opacity: convergenceOpacity, scale: convergenceScale }}
             className="absolute inset-0 flex flex-col items-center justify-center"
@@ -144,7 +172,10 @@ export function DiagnosticDataQuality({ accentColor }: { accentColor: string }) 
               className="border-navy/15 rounded-[24px] border-2 bg-cream/80 px-6 py-6 text-center backdrop-blur-md md:px-12 md:py-10"
               style={{ borderColor: accentColor }}
             >
-              <CheckCircle2 className="mx-auto h-6 w-6 md:h-8 md:w-8" style={{ color: accentColor }} />
+              <CheckCircle2
+                className="mx-auto h-6 w-6 md:h-8 md:w-8"
+                style={{ color: accentColor }}
+              />
               <p className="text-navy/50 mt-3 font-mono text-[9px] font-bold uppercase tracking-[0.2em] md:mt-4 md:text-[10px]">
                 1 fonte de verdade
               </p>
@@ -174,5 +205,97 @@ export function DiagnosticDataQuality({ accentColor }: { accentColor: string }) 
         </div>
       </div>
     </section>
+  )
+}
+
+// ============================================
+// CARD CENTRAL — "1.700" sempre visível
+// ============================================
+function CenterCard({
+  scrollYProgress,
+  reduced,
+}: {
+  scrollYProgress: MotionValue<number>
+  reduced: boolean | null
+}) {
+  const scale = reduced ? 1 : useTransform(scrollYProgress, [0, 0.04], [0.7, 1])
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}
+    >
+      <motion.div
+        style={{ scale, rotate: CENTER_CARD.rot }}
+        className="border-navy/25 bg-cream/95 rounded-xl border-2 px-4 py-2.5 shadow-lg backdrop-blur-sm md:px-5 md:py-3"
+      >
+        <div className="flex items-center gap-1.5 pb-1 md:pb-1.5">
+          <span className="bg-navy/25 h-1 w-1 rounded-full" />
+          <span className="bg-navy/25 h-1 w-1 rounded-full" />
+          <span className="bg-navy/25 h-1 w-1 rounded-full" />
+        </div>
+        <p className="font-anton text-navy text-base leading-none md:text-xl">
+          {CENTER_CARD.num}
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+// ============================================
+// CARD NÃO-CENTRAL — opacity via scroll
+// ============================================
+function PlanilhaCard({
+  planilha,
+  index,
+  total,
+  scrollYProgress,
+  reduced,
+}: {
+  planilha: Planilha
+  index: number
+  total: number
+  scrollYProgress: MotionValue<number>
+  reduced: boolean | null
+}) {
+  const start = 0.04 + (index / total) * 0.2
+  const end = start + 0.03
+
+  const opacity = reduced ? 1 : useTransform(scrollYProgress, [start, end], [0, 1])
+  const scale = reduced ? 1 : useTransform(scrollYProgress, [start, end], [0.7, 1])
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}
+    >
+      <motion.div
+        style={{
+          x: planilha.x,
+          y: planilha.y,
+          rotate: planilha.rot,
+          opacity,
+          scale,
+        }}
+        className="border-navy/15 bg-cream/70 rounded-lg border px-2.5 py-1.5 shadow-sm backdrop-blur-sm md:px-3 md:py-2"
+      >
+        <div className="flex items-center gap-1 pb-0.5 md:gap-1.5 md:pb-1">
+          <span className="bg-navy/20 h-1 w-1 rounded-full" />
+          <span className="bg-navy/20 h-1 w-1 rounded-full" />
+          <span className="bg-navy/20 h-1 w-1 rounded-full" />
+        </div>
+        <p className="font-anton text-navy text-xs leading-none md:text-base">
+          {planilha.num}
+        </p>
+      </motion.div>
+    </div>
   )
 }
