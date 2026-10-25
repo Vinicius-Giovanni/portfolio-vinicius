@@ -1,6 +1,4 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import { SmoothScroll } from '@/components/ui/SmoothScroll'
 import appCss from '../styles.css?url'
@@ -45,10 +43,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="bg-cream text-navy">
         <SmoothScroll />
         {children}
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[{ name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> }]}
-        />
         <Scripts />
       </body>
     </html>

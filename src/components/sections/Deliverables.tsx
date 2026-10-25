@@ -14,15 +14,9 @@ import { DepthLayers } from '@/components/ui/DepthLayers'
 import { LazyThree } from '@/components/three/LazyThree'
 import { cn } from '@/lib/utils'
 
-const PanelCanvas = lazy(() =>
-  import('@/components/three/PanelCanvas').then((m) => ({ default: m.PanelCanvas })),
-)
-const FinancialScene = lazy(() =>
-  import('@/components/three/scenes/FinancialScene').then((m) => ({ default: m.FinancialScene })),
-)
-const DeliveriesScene = lazy(() =>
-  import('@/components/three/scenes/DeliveriesScene').then((m) => ({ default: m.DeliveriesScene })),
-)
+import { PanelCanvas } from '@/components/three/PanelCanvas'
+import { FinancialScene } from '@/components/three/scenes/FinancialScene'
+import { DeliveriesScene } from '@/components/three/scenes/DeliveriesScene'
 
 export function Deliverables() {
   const ref = useRef<HTMLElement>(null)
