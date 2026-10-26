@@ -29,7 +29,22 @@ export const Route = createRootRoute({
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:image', content: '/og.jpg' },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [{ rel: 'stylesheet', href: appCss },
+    {
+      rel: 'preload',
+      href: '/assets/vinicius-hero.avif',
+      as: 'image',
+      type: 'image/avif',
+      fetchPriority: 'high',
+    },
+    {
+      rel: 'preload',
+      href: '/assets/vinicius-hero.webp',
+      as: 'image',
+      type: 'image/webp',
+      fetchPriority: 'high',
+    },
+    ],
   }),
   shellComponent: RootDocument,
 })

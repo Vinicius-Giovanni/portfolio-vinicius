@@ -30,14 +30,21 @@ export function About() {
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* CAMADA 1 — Imagem com inset animado (isolada) */}
         <motion.div style={imageStyle} className="absolute overflow-hidden">
-          <img
-            src="/assets/vinicius-mountain.png"
-            alt="Vinícius G Pereira em uma montanha"
-            fetchPriority="high"
-            draggable={false}
-            className="absolute inset-0 h-full w-full"
-            style={{ objectFit: 'cover', objectPosition: 'center' }}
-          />
+          <picture>
+            <source srcSet="/assets/vinicius-mountain.avif" type="image/avif" />
+            <source srcSet="/assets/vinicius-mountain.webp" type="image/webp" />
+            <img
+              src="/assets/vinicius-mountain.png"
+              alt="Vinícius G Pereira em uma montanha"
+              draggable={false}
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: 'center' }}
+              width={1600}
+              height={1200}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
           <div className="bg-navy/60 absolute inset-0" aria-hidden />
         </motion.div>
 

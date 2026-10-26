@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { PROJECTS, getProjectBySlug } from '@/data/projects'
 import { DiagnosticRenderer } from '@/components/projects/diagnostics/DiagnosticRenderer'
 import { NavBar } from '#/components/ui/NavBar'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/projetos/$slug')({
   loader: ({ params }) => {
@@ -17,6 +18,14 @@ export const Route = createFileRoute('/projetos/$slug')({
 
 function CaseStudyPage() {
   const { project } = Route.useLoaderData()
+
+  useEffect(() => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    }
+  }, [project.slug])
 
   const currentIndex = PROJECTS.findIndex((p) => p.slug === project.slug)
   const next = PROJECTS[(currentIndex + 1) % PROJECTS.length]

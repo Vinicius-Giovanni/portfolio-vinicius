@@ -10,7 +10,6 @@ import {
   SiHtml5,
 } from 'react-icons/si'
 import { BarChart3, Bot } from 'lucide-react'
-import { HeroCssParticles } from '@/components/sections/HeroCssParticles'
 import { cn } from '@/lib/utils'
 
 function scrollToId(id: string) {
@@ -62,12 +61,12 @@ export function Hero() {
     },
     {
       label: 'Ver Projetos →',
-      variant: 'solid' as const,
+      variant: 'ghots' as const,
       onClick: () => navigate({ to: '/projetos' }),
     },
     {
       label: 'Ver Entregáveis →',
-      variant: 'ghost' as const,
+      variant: 'solid' as const,
       onClick: () => scrollToId('#entregaveis'),
     },
     {
@@ -80,7 +79,6 @@ export function Hero() {
   return (
     <section ref={ref} className="h-screen-safe relative w-full overflow-hidden">
       {/* Partículas CSS no lugar do Canvas 3D */}
-      <HeroCssParticles />
 
       {!reduced && (
         <motion.div
@@ -128,14 +126,22 @@ export function Hero() {
       ))}
 
       {/* Foto */}
-      <motion.img
-        src="/assets/vinicius-hero.png"
-        alt="Vinícius G Pereira"
+      <motion.picture
         style={{ y: yPhoto }}
-        className="pointer-events-none absolute bottom-0 left-1/2 z-20 h-[78%] max-w-none -translate-x-1/2 object-contain md:h-[85%] xl:h-[88%]"
-        draggable={false}
-        fetchPriority="high"
-      />
+        className="pointer-events-none absolute bottom-0 left-1/2 z-20 flex h-[78%] max-w-none -translate-x-1/2 items-end md:h-[85%] xl:h-[88%]"
+      >
+        <source srcSet="/assets/vinicius-hero.avif" type="image/avif" />
+        <source srcSet="/assets/vinicius-hero.webp" type="image/webp" />
+        <img
+          src="/assets/vinicius-hero.png"
+          alt="Vinícius G Pereira"
+          className="h-full w-auto object-contain"
+          draggable={false}
+          fetchPriority="high"
+          width={800}
+          height={1200}
+        />
+      </motion.picture>
 
       {/* Camada 3 — PORTFÓLIO stroke */}
       <motion.div

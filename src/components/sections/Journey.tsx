@@ -1,127 +1,140 @@
-import { useRef, useState } from 'react'
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-  useReducedMotion,
-} from 'motion/react'
+import { useRef } from 'react'
+import { motion, useInView, useReducedMotion } from 'motion/react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 
 type Chapter = {
   year: string
-  chapter: string
   title: string
   text: string
   accent: string
+  isCurrent?: boolean
 }
 
 const TIMELINE: Chapter[] = [
   {
     year: '2021',
-    chapter: '01',
     title: 'O começo',
     text: 'Entro como ajudante interno no Grupo Casas Bahia',
     accent: '#8B6914',
   },
   {
     year: '2023',
-    chapter: '02',
     title: 'Crescimento',
     text: 'Passa a assistente administrativo',
     accent: '#C9A227',
   },
   {
     year: '2024',
-    chapter: '03',
     title: 'A virada',
     text: 'Passa a analista de dados com foco em dados e RPA',
     accent: '#4A90B8',
   },
   {
     year: '2025',
-    chapter: '04',
     title: 'Formação',
     text: 'Começa o bacharelado em Engenharia de Dados',
     accent: '#8BA4C9',
   },
   {
     year: '2026',
-    chapter: '05',
     title: 'Empreender',
     text: 'Funda a Cosmos',
     accent: '#F4E4BC',
   },
   {
     year: 'Atual',
-    chapter: '06',
     title: 'Agora',
     text: 'Conciliando dados e RPA na Casas Bahia e construção da Cosmos',
     accent: '#FFD700',
+    isCurrent: true,
   },
 ]
 
-const N = TIMELINE.length
-
 export function Journey() {
   const ref = useRef<HTMLElement>(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
   const reduced = useReducedMotion()
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end end'],
-  })
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', '-83.333%'])
-  const [active, setActive] = useState(0)
-
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const next = Math.min(N - 1, Math.floor(v * N))
-    if (next !== active) setActive(next)
-  })
-
-  if (reduced) return <ReducedFallback />
 
   return (
-    <section id="trajetoria" data-snap="multi" data-snap-intervals="6" ref={ref} className="relative h-[600vh] bg-navy">
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Section label */}
-        <div className="absolute top-20 left-5 z-30 md:top-20 md:left-10">
-          <SectionLabel variant="light">TRAJETÓRIA</SectionLabel>
+    <section
+      ref={ref}
+      id="trajetoria"
+      data-snap="start"
+      className="bg-navy text-cream relative overflow-hidden"
+      style={{ paddingBlock: 'var(--spacing-fluid-section)' }}
+    >
+      {/* Grid pontilhado de fundo */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        aria-hidden
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(237,230,216,0.8) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+        }}
+      />
+
+      {/* Glow ambiente */}
+      {!reduced && (
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+          className="pointer-events-none absolute top-1/3 right-1/4 h-[40vh] w-[40vh] rounded-full blur-[140px]"
+          style={{
+            background: 'radial-gradient(circle, rgba(244,228,188,0.4), transparent)',
+          }}
+          aria-hidden
+        />
+      )}
+
+      <div className="relative mx-auto w-[min(92%,1080px)]">
+        <SectionLabel variant="light">TRAJETÓRIA</SectionLabel>
+
+        {/* Header editorial */}
+        <div className="mt-8 mb-14 flex flex-col gap-4 md:mb-20 md:flex-row md:items-end md:justify-between">
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="font-bold leading-tight"
+            style={{ fontSize: 'var(--text-h2)' }}
+          >
+            Uma linha
+            <br />
+            <span className="text-cream/40">do começo até agora.</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-cream/60 max-w-xs text-sm leading-relaxed md:text-right"
+            style={{ fontSize: 'var(--text-small)' }}
+          >
+            De ajudante interno a analista de dados e fundador. Cinco anos de evolução contínua.
+          </motion.p>
         </div>
 
-        {/* Horizontal track */}
-        <motion.div style={{ x }} className="flex h-full w-[600vw]">
-          {TIMELINE.map((item, i) => (
-            <ChapterSlide
-              key={item.year}
-              item={item}
-              index={i}
-              isActive={active === i}
-            />
-          ))}
-        </motion.div>
+        {/* Timeline vertical */}
+        <div className="relative">
+          {/* Linha vertical */}
+          <motion.div
+            initial={{ scaleY: 0 }}
+            animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="bg-cream/15 absolute top-0 bottom-0 left-3 w-px origin-top md:left-4"
+            aria-hidden
+          />
 
-        {/* Bottom chapter title + dots */}
-        <div className="pointer-events-none absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-3">
-          <motion.p
-            key={`title-${active}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="text-cream/70 font-mono text-[10px] font-bold tracking-[0.3em] uppercase md:text-xs"
-          >
-            {TIMELINE[active].title}
-          </motion.p>
-          <div className="flex items-center gap-1.5 rounded-full bg-black/40 px-4 py-2.5 backdrop-blur-md">
-            {TIMELINE.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  i === active
-                    ? 'bg-cream w-8'
-                    : i < active
-                      ? 'bg-cream/50 w-2'
-                      : 'bg-cream/20 w-2'
-                }`}
+          <div className="flex flex-col">
+            {TIMELINE.map((chapter, i) => (
+              <TimelineItem
+                key={chapter.year}
+                chapter={chapter}
+                index={i}
+                isInView={isInView}
+                reduced={reduced}
               />
             ))}
           </div>
@@ -131,161 +144,104 @@ export function Journey() {
   )
 }
 
-function ChapterSlide({
-  item,
+function TimelineItem({
+  chapter,
   index,
-  isActive,
+  isInView,
+  reduced,
 }: {
-  item: Chapter
+  chapter: Chapter
   index: number
-  isActive: boolean
+  isInView: boolean
+  reduced: boolean | null
 }) {
-  const isCurrent = item.year === 'Atual'
+  const delay = 0.4 + index * 0.12
 
   return (
-    <div className="relative flex h-full w-screen shrink-0 items-center justify-center overflow-hidden px-6 md:px-16">
-      {/* Background gradient with accent */}
-      <div className="absolute inset-0 -z-10" aria-hidden>
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(circle at ${30 + index * 8}% 45%, ${item.accent}28 0%, transparent 60%)`,
-          }}
-        />
-        {/* Grid pontilhado */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #EDE6D8 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-            maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-          }}
-        />
-        {/* Glow pulsante per chapter */}
+    <motion.div
+      initial={{ opacity: 0, x: reduced ? 0 : -20 }}
+      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: reduced ? 0 : -20 }}
+      transition={{
+        duration: 0.6,
+        delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="group relative grid grid-cols-[auto_1fr] items-start gap-5 py-5 md:gap-8 md:py-6"
+    >
+      {/* Dot */}
+      <div className="relative flex h-7 w-7 items-center justify-center md:h-9 md:w-9">
         <motion.div
-          animate={
-            isActive
-              ? { scale: [1, 1.2, 1], opacity: [0.15, 0.35, 0.15] }
-              : { opacity: 0 }
-          }
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-1/2 left-1/2 h-[55vh] w-[55vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[140px]"
-          style={{
-            background: `radial-gradient(circle, ${item.accent}55, transparent)`,
+          initial={{ scale: 0 }}
+          animate={isInView ? { scale: 1 } : { scale: 0 }}
+          transition={{
+            duration: 0.5,
+            delay: delay + 0.15,
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
           }}
-        />
-      </div>
-
-      {/* Chapter info — top left area (abaixo do label global) */}
-      <div className="absolute top-24 left-6 md:top-28 md:left-10">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          className="relative flex h-4 w-4 items-center justify-center rounded-full md:h-5 md:w-5"
+          style={{ backgroundColor: chapter.accent }}
         >
-          <p className="text-cream/40 font-mono text-[10px] font-bold tracking-[0.3em] uppercase">
-            Capítulo {item.chapter}
-          </p>
-        </motion.div>
-      </div>
-
-      {/* Main content */}
-      <div className="relative z-10 flex w-full max-w-7xl flex-col items-center justify-center gap-10 md:flex-row md:items-baseline md:gap-16">
-        {/* Huge year */}
-        <div className="relative">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.7, filter: 'blur(24px)' }}
-            animate={
-              isActive
-                ? { opacity: 1, scale: 1, filter: 'blur(0px)' }
-                : { opacity: 0, scale: 0.7, filter: 'blur(24px)' }
-            }
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="font-anton leading-[0.85] tracking-tight"
-            style={{
-              fontSize: isCurrent
-                ? 'clamp(4rem, 14vw, 12rem)'
-                : 'clamp(6rem, 20vw, 18rem)',
-              color: isCurrent ? '#FFD700' : item.accent,
-              textShadow: isCurrent ? '0 0 120px rgba(255,215,0,0.5)' : 'none',
-            }}
-          >
-            {item.year}
-          </motion.div>
-
-          {/* Pulse rings for "Atual" */}
-          {isCurrent && isActive && (
+          {/* Pulso no dot do "Atual" */}
+          {chapter.isCurrent && !reduced && isInView && (
             <>
-              <motion.div
-                animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeOut' }}
-                className="pointer-events-none absolute inset-0 -z-10 rounded-full blur-2xl"
-                style={{ background: 'radial-gradient(circle, #FFD70080, transparent)' }}
+              <motion.span
+                animate={{ scale: [1, 2.4, 1], opacity: [0.6, 0, 0.6] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+                className="absolute inset-0 rounded-full"
+                style={{ backgroundColor: chapter.accent }}
+                aria-hidden
               />
-              <motion.div
-                animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
+              <motion.span
+                animate={{ scale: [1, 1.8, 1], opacity: [0.4, 0, 0.4] }}
                 transition={{
-                  duration: 3,
+                  duration: 2.5,
                   repeat: Infinity,
                   ease: 'easeOut',
-                  delay: 1.2,
+                  delay: 0.8,
                 }}
-                className="pointer-events-none absolute inset-0 -z-10 rounded-full blur-2xl"
-                style={{ background: 'radial-gradient(circle, #FFD70060, transparent)' }}
+                className="absolute inset-0 rounded-full"
+                style={{ backgroundColor: chapter.accent }}
+                aria-hidden
               />
             </>
           )}
-        </div>
-
-        {/* Text block */}
-        <motion.div
-          initial={{ opacity: 0, x: 60 }}
-          animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: 60 }}
-          transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-md"
-        >
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={isActive ? { scaleX: 1 } : { scaleX: 0 }}
-            transition={{ duration: 0.8, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-5 h-px w-16 origin-left"
-            style={{ background: item.accent }}
-          />
-          <p className="text-cream/90 text-[clamp(1rem,1.8vw,1.5rem)] leading-snug font-medium">
-            {item.text}
-          </p>
         </motion.div>
       </div>
-    </div>
-  )
-}
 
-function ReducedFallback() {
-  return (
-    <section id="trajetoria" className="bg-navy px-6 py-24 md:px-16">
-      <div className="mx-auto max-w-3xl">
-        <SectionLabel variant="light">TRAJETÓRIA</SectionLabel>
-        <div className="mt-12 flex flex-col gap-10">
-          {TIMELINE.map((item) => (
-            <div key={item.year} className="border-cream/20 border-l-2 pl-6">
-              <p className="text-cream/40 font-mono text-xs font-bold tracking-[0.2em] uppercase">
-                Capítulo {item.chapter}
-              </p>
-              <p
-                className="font-anton mt-2 text-5xl md:text-7xl"
-                style={{ color: item.accent }}
-              >
-                {item.year}
-              </p>
-              <p className="text-cream mt-2 font-bold">{item.title}</p>
-              <p className="text-cream/70 mt-2 text-sm leading-relaxed md:text-base">
-                {item.text}
-              </p>
-            </div>
-          ))}
+      {/* Conteúdo */}
+      <div className="flex flex-col gap-1 pb-2 md:flex-row md:items-baseline md:gap-6">
+        {/* Ano */}
+        <div className="flex shrink-0 items-baseline gap-3">
+          <span
+            className="font-anton leading-[0.9] tracking-tight transition-colors duration-300"
+            style={{
+              fontSize: chapter.isCurrent ? 'var(--text-numeral-lg)' : 'var(--text-h2)',
+              color: chapter.isCurrent ? chapter.accent : chapter.accent,
+              textShadow: chapter.isCurrent ? `0 0 40px ${chapter.accent}55` : 'none',
+            }}
+          >
+            {chapter.year}
+          </span>
+        </div>
+
+        {/* Título + texto */}
+        <div className="flex flex-col gap-1">
+          <p
+            className="font-mono font-bold tracking-[0.2em] text-cream/50 uppercase"
+            style={{ fontSize: 'var(--text-tiny)' }}
+          >
+            {chapter.title}
+          </p>
+          <p
+            className="text-cream/85 max-w-md leading-snug"
+            style={{ fontSize: 'var(--text-body)' }}
+          >
+            {chapter.text}
+          </p>
         </div>
       </div>
-    </section>
+    </motion.div>
   )
 }
