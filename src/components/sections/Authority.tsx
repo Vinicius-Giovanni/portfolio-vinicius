@@ -7,7 +7,7 @@ type StatItem = { stat: string; text: string }
 const ITEMS: StatItem[] = [
   {
     stat: 'R$ 25,5 mi',
-    text: 'de capital liberado em fluxo parado — estoque em trânsito que voltou ao caixa.',
+    text: 'de capital liberado. Estoque que estava parado entre etapas de expedição voltou ao fluxo operacional e ao caixa.',
   },
   {
     stat: 'R$ 12 mi/ano',
@@ -102,8 +102,9 @@ export function Authority() {
         </motion.h2>
 
         <p className="text-cream/60 mt-5 max-w-xl text-sm leading-relaxed">
-          Projetos reais em operações logísticas de grande escala. Números auditáveis, sem
-          somatórios — cada um com sua própria origem e contexto.
+        Projetos entregues em operações logísticas de grande escala. Cada valor mede um impacto
+        de natureza distinta (capital liberado, economia recorrente, custo evitado) e tem origem,
+        metodologia e período de apuração próprios. Os números não representam somatório.
         </p>
 
         <div className="relative mt-16 md:mt-20">

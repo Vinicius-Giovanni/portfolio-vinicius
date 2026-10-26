@@ -58,7 +58,7 @@ export const PROJECTS: Project[] = [
       { value: '20h → 3h', label: 'de tempo parado por peça' },
     ],
     context:
-      'Setor de expedição de um dos maiores centros de distribuição do país, processando mais de 100 mil peças por dia, operava há anos com o mesmo fluxo: a peça chegava da separação, era armazenada no bolsão, conferida e entregue ao transportador. O processo era necessário, mas acumulava múltiplos gargalos, erros, retrabalho e dependência de outros setores. Cada peça passava, em média, 20 horas parada entre etapas — capital imobilizado e SLA comprometido.',
+      'O setor de expedição de um dos maiores centros de distribuição do país processava mais de 100 mil peças por dia. O fluxo operacional seguia o mesmo desenho havia anos, com quatro etapas fixas: separação, armazenagem no bolsão, conferência e entrega ao transportador. O processo era necessário e funcional, mas cada uma das quatro etapas acumulava pontos de retenção, erros de conferência, retrabalho e dependência de outros setores para liberação. O resultado era um tempo médio de 20 horas entre a separação e a entrega ao transportador, com estoque parado em etapas intermediárias.',
     challenge:
       'Diagnosticar e eliminar gargalos em uma operação gigante, sem acesso a sistemas ideais e sem poder parar a operação. Quantificar o impacto em R$ de capital e tempo para justificar mudanças estruturais na liderança.',
     approach: [
@@ -79,7 +79,7 @@ export const PROJECTS: Project[] = [
       { value: '17h', label: 'mais cedo na loja' },
     ],
     learnings:
-      'Em operações gigantes, os gargalos raramente estão onde todo mundo acha. O diagnóstico com base em Big Data mostrou que a maior perda não estava em "trabalhar mais rápido" — estava em peças paradas em etapas intermediárias que ninguém media.',
+      'O diagnóstico com base no histórico de um ano de operação mostrou que o problema principal não era velocidade de execução. Era o tempo de peça parada entre etapas, que chegava a 20 horas em média e não era medido como indicador operacional. A operação monitorava produtividade por colaborador, mas não o intervalo entre o fim de uma etapa e o início da próxima.',
   },
   {
     slug: 'data-quality-operacao-transporte',
@@ -103,7 +103,7 @@ export const PROJECTS: Project[] = [
     approach: [
       'Centralização dos dados dispersos e aplicação de Data Quality',
       'Armazenamento no Databricks com consumo via B.I (Power BI) e atualização automatizada por Power Automate',
-      'Alinhamento direto com a transportadora terceirizada — metas, prazos e implementação de qualidade de dados também do lado deles',
+      'Alinhamento com a transportadora terceirizada em metas, prazos e padronização de dados também na fonte externa.',
       'Acompanhamento de métricas antes vs depois até a normalização da cultura de dados',
       'Disponibilização de visão gerencial para gerentes regionais e gestores de CD',
     ],
@@ -115,7 +115,7 @@ export const PROJECTS: Project[] = [
       { value: 'Toda a operação', label: 'com visão gerencial unificada' },
     ],
     learnings:
-      'Data Quality não é problema técnico — é cultural. Antes de criar mais uma tabela, é preciso alinhar quem define o que é cada métrica e convencer as pessoas a manterem os dados atualizados. O sistema sozinho não resolve nada.',
+      'Antes de construir mais uma tabela, a implantação de Data Quality exige duas decisões anteriores: definir qual área é dona de cada métrica e estabelecer quem atualiza cada fonte. Sem essas definições, o sistema funciona tecnicamente mas os dados continuam inconsistentes.',
   },
   {
     slug: 'automacao-rpa-programacao-pedidos',
@@ -135,7 +135,7 @@ export const PROJECTS: Project[] = [
     context:
       'O setor de programação de pedidos executava o processo de forma manual, todos os dias, várias vezes ao dia. Cada ciclo consumia cerca de 1 hora de trabalho dedicado, e o acúmulo gerava erros humanos, retrabalho e alto índice de peças canceladas. Um processo crítico que alimentava toda a cadeia de distribuição.',
     challenge:
-      'Reduzir tempo de execução, eliminar erros manuais e liberar o time para atividades analíticas — sem comprometer a confiabilidade de um processo crítico.',
+      'Reduzir o tempo de execução, eliminar erros manuais e liberar o time para análise, sem comprometer a confiabilidade de um processo com regras variáveis e exceções recorrentes.',
     approach: [
       'Mapeamento completo do processo real (não o documentado)',
       'Identificação de gaps, exceções e oportunidades de automação',
@@ -172,7 +172,7 @@ export const PROJECTS: Project[] = [
     context:
       'Dados espalhados entre dezenas de setores, regras de negócio diferentes em cada área e números conflitantes em reuniões. Sem histórico para análise de sazonalidade. Decisões eram tomadas com base em achismo, não em dado. Cada área defendia seu número como "o certo".',
     challenge:
-      'Construir uma infraestrutura de BI que consolidasse dados de múltiplos setores com regras padronizadas, criasse métricas únicas e fornecesse visão integrada para todos os níveis de gestão — sem parar as operações existentes.',
+      'Construir uma infraestrutura de BI que consolidasse dados de múltiplos setores com regras padronizadas, criasse métricas únicas e fornecesse visão integrada para todos os níveis de gestão, sem parar as operações existentes.',
     approach: [
       'Levantamento de dados em todos os setores envolvidos',
       'Padronização das regras de negócio (com buy-in das áreas)',

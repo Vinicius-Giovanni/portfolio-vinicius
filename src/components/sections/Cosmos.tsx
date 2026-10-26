@@ -19,14 +19,14 @@ const CARDS: Card[] = [
     icon: Workflow,
     title: 'O que construímos',
     description:
-      'Não vendemos ferramentas. Entregamos o trabalho. Automatizamos processos manuais, construímos softwares sob medida e estruturamos operações de dados do zero — do mapeamento à entrega em produção. O cliente não compra um dashboard: compra a decisão resolvida.',
+      'A Cosmos opera sob o modelo Service as Software: assume a execução do trabalho em vez de entregar uma ferramenta para o cliente operar. Os contratos são definidos sobre KPIs em três frentes: aquisição qualificada, eficiência operacional e visão de negócio. A execução é feita por agentes de IA auditados pelo Cosmos Trust AI, framework interno de verificação. O que se contrata é o resultado medido, não a licença do software.',
   },
   {
     number: '02',
     icon: Layers,
     title: 'Como trabalhamos',
     description:
-      'Cada projeto começa entendendo onde a inteligência (tarefas repetitivas, baseadas em regras) pode ser automatizada e onde o julgamento humano (contexto, estratégia, exceções) continua essencial. O resultado é um sistema que executa o trabalho, não apenas uma ferramenta que o profissional precisa operar.',
+      ' trabalho da Cosmos segue quatro fases, cada uma com entregável definido. A primeira é o diagnóstico, com quantificação do impacto financeiro e mapeamento das causas. A segunda é a definição do resultado contratado, com KPIs mensuráveis, prazo de apuração e critério de encerramento. A terceira é a construção da solução, executada por agentes de IA auditados pelo Cosmos Trust AI. A quarta é a operação assistida, com relatórios semanais de acompanhamento até o KPI ser atingido. O projeto só é considerado concluído quando o KPI acordado é atingido. A responsabilidade pela entrega é da Cosmos durante todo o ciclo.',
   },
   {
     number: '03',
