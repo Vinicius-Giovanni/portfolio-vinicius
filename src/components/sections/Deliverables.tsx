@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, lazy, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import {
   motion,
   useScroll,
@@ -10,13 +10,9 @@ import { ArrowDown } from 'lucide-react'
 import { CountUp } from '@/components/ui/CountUp'
 import { Typewriter } from '@/components/ui/Typewriter'
 import { FlowDiagram } from '@/components/ui/FlowDiagram'
-import { DepthLayers } from '@/components/ui/DepthLayers'
-import { LazyThree } from '@/components/three/LazyThree'
 import { cn } from '@/lib/utils'
-
-import { PanelCanvas } from '@/components/three/PanelCanvas'
-import { FinancialScene } from '@/components/three/scenes/FinancialScene'
-import { DeliveriesScene } from '@/components/three/scenes/DeliveriesScene'
+import { FrotaWireframe } from '@/components/deliverables/FrotaWireframe'
+import { DashboardWireframe } from '@/components/deliverables/DashboardWireframe'
 
 export function Deliverables() {
   const ref = useRef<HTMLElement>(null)
@@ -89,38 +85,30 @@ export function Deliverables() {
 // ============================================
 function PanelImpact({ isActive }: { isActive: boolean }) {
   const reduced = useReducedMotion()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.matchMedia('(max-width: 768px)').matches)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
 
   return (
-    <div className="relative isolate flex h-full w-screen shrink-0 items-center justify-center overflow-hidden bg-[#0B1F3A]">
+    <div className="relative isolate flex h-full w-screen shrink-0 items-center justify-center overflow-hidden bg-[#050d1a]">
       <div
         className="absolute inset-0 z-0"
         aria-hidden
-        style={{ background: 'radial-gradient(circle at 20% 30%, #1a2f4f 0%, #0B1F3A 60%)' }}
+        style={{ background: 'radial-gradient(circle at 30% 40%, #0a1830 0%, #050d1a 70%)' }}
       />
 
-      <div className="absolute inset-0 z-[1]">
-        <DepthLayers variant="navy" />
-      </div>
-
-      {/* LazyThree: só monta o Canvas quando a seção estiver próxima */}
-      <div className="absolute inset-0 z-[2]">
-        <LazyThree rootMargin="300px" fallback={null}>
-          <PanelCanvas isActive={isActive} cameraPosition={[0, -0.25, 5.5]} envPreset="studio">
-            <FinancialScene isActive={isActive} isVisible={isActive} isMobile={isMobile} />
-          </PanelCanvas>
-        </LazyThree>
-      </div>
+      {/* Grid animado */}
+      <motion.div
+        animate={reduced ? undefined : { x: [0, 60, 0], y: [0, -30, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute inset-0 z-0 opacity-[0.12]"
+        aria-hidden
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(74,158,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(74,158,255,0.6) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
 
       <div
-        className="relative z-10 grid w-full items-center xl:grid-cols-[3fr_2fr]"
+        className="relative z-10 grid w-full items-center gap-6 xl:grid-cols-[3fr_2fr]"
         style={{
           maxWidth: 'min(94vw, 1600px)',
           paddingInline: 'max(1rem, 4vw)',
@@ -130,30 +118,33 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
         }}
       >
         <div>
-          <div>
-            <GlowNumber isActive={isActive}>
-              <div
-                className="font-anton text-cream leading-[0.85] tracking-tight"
-                style={{ fontSize: 'var(--text-numeral-xl)' }}
-              >
-                <CountUp to={4} prefix="+R$ " suffix=" mi" resetKey={isActive} duration={2.2} />
-              </div>
-            </GlowNumber>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div
+              className="font-anton leading-[0.85] tracking-tight"
+              style={{ fontSize: 'var(--text-numeral-xl)', color: '#F1F1F1' }}
+            >
+              <CountUp to={4} prefix="+R$ " suffix=" mi" resetKey={isActive} duration={2.2} />
+            </div>
+          </motion.div>
 
           <motion.div
             initial={{ scaleX: 0 }}
             animate={isActive ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 0.9, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-cream/15 mt-3 h-px w-full max-w-md origin-left md:mt-4"
+            className="mt-3 h-px w-full max-w-md origin-left md:mt-4"
+            style={{ backgroundColor: 'rgba(74, 158, 255, 0.3)' }}
           />
 
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-cream/75 mt-3 max-w-md leading-snug"
-            style={{ fontSize: 'var(--text-body)' }}
+            className="mt-3 max-w-md leading-snug"
+            style={{ fontSize: 'var(--text-body)', color: 'rgba(241, 241, 241, 0.75)' }}
           >
             <Typewriter
               text="de economia anual com dados, automação e IA"
@@ -170,36 +161,40 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border backdrop-blur-md transition-colors"
-              style={{ padding: 'max(0.875rem, 1.4vw)' }}
+              className="rounded-2xl border backdrop-blur-md"
+              style={{
+                padding: 'max(0.875rem, 1.4vw)',
+                borderColor: 'rgba(74, 158, 255, 0.2)',
+                backgroundColor: 'rgba(74, 158, 255, 0.04)',
+              }}
             >
               <div
-                className="text-cream font-bold"
-                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+                className="font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)', color: '#F1F1F1' }}
               >
                 <CountUp to={3} prefix="~R$ " suffix=" mi" resetKey={isActive} duration={1.8} />
               </div>
               <p
-                className="text-cream/60 mt-1 font-bold tracking-[0.15em] uppercase"
-                style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+                className="mt-1 font-bold tracking-[0.15em] uppercase"
+                style={{ fontSize: 'max(0.625rem, 0.7vw)', color: 'rgba(74, 158, 255, 0.7)' }}
               >
                 Dados &amp; B.I
               </p>
               <p
-                className="text-cream/85 mt-1.5 leading-snug"
-                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+                className="mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)', color: 'rgba(241, 241, 241, 0.85)' }}
               >
                 Otimização de operação logística em grande varejista nacional
               </p>
               <p
-                className="text-cream mt-1 font-bold leading-snug"
-                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+                className="mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)', color: '#F1F1F1' }}
               >
                 -23% de frota, mantendo 100% do atendimento
               </p>
               <p
-                className="text-cream/55 mt-1 leading-snug"
-                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+                className="mt-1 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)', color: 'rgba(241, 241, 241, 0.55)' }}
               >
                 Liderei a análise e a ponte entre áreas
               </p>
@@ -209,36 +204,40 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/10 bg-cream/5 hover:bg-cream/10 rounded-2xl border backdrop-blur-md transition-colors"
-              style={{ padding: 'max(0.875rem, 1.4vw)' }}
+              className="rounded-2xl border backdrop-blur-md"
+              style={{
+                padding: 'max(0.875rem, 1.4vw)',
+                borderColor: 'rgba(74, 158, 255, 0.2)',
+                backgroundColor: 'rgba(74, 158, 255, 0.04)',
+              }}
             >
               <div
-                className="text-cream font-bold"
-                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+                className="font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)', color: '#F1F1F1' }}
               >
                 <CountUp to={1.5} prefix="~R$ " suffix=" mi" resetKey={isActive} duration={1.8} />
               </div>
               <p
-                className="text-cream/60 mt-1 font-bold tracking-[0.15em] uppercase"
-                style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+                className="mt-1 font-bold tracking-[0.15em] uppercase"
+                style={{ fontSize: 'max(0.625rem, 0.7vw)', color: 'rgba(74, 158, 255, 0.7)' }}
               >
                 Automação RPA
               </p>
               <p
-                className="text-cream/85 mt-1.5 leading-snug"
-                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+                className="mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)', color: 'rgba(241, 241, 241, 0.85)' }}
               >
                 Automação de rotinas administrativas em diversas operações
               </p>
               <p
-                className="text-cream mt-1 font-bold leading-snug"
-                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+                className="mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)', color: '#F1F1F1' }}
               >
                 1h → &lt;5min por processo (-92%)
               </p>
               <p
-                className="text-cream/55 mt-1 leading-snug"
-                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+                className="mt-1 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)', color: 'rgba(241, 241, 241, 0.55)' }}
               >
                 Desenvolvi as automações ponta a ponta
               </p>
@@ -249,15 +248,18 @@ function PanelImpact({ isActive }: { isActive: boolean }) {
             initial={{ opacity: 0 }}
             animate={isActive ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.6, delay: 1.6 }}
-            className="text-cream/40 mt-3 leading-relaxed md:mt-4"
-            style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+            className="mt-3 leading-relaxed md:mt-4"
+            style={{ fontSize: 'max(0.625rem, 0.7vw)', color: 'rgba(241, 241, 241, 0.4)' }}
           >
             Cálculo: gasto evitado com prestadores + ganhos de otimização + perdas de produto
             evitadas.
           </motion.p>
         </div>
-
-        <div className="hidden xl:block" />
+        
+        {/* Visual — frota logística apenas no desktop (xl+) */}
+        <div className="hidden xl:relative xl:flex xl:items-center xl:justify-center">
+          <FrotaWireframe />
+        </div>
       </div>
     </div>
   )
@@ -440,29 +442,24 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
   const reduced = useReducedMotion()
 
   return (
-    <div className="relative flex h-full w-screen shrink-0 items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0" aria-hidden>
-        <div
-          className="absolute inset-0"
-          style={{ background: 'radial-gradient(circle at 80% 50%, #1a2f4f 0%, #0B1F3A 60%)' }}
-        />
-      </div>
-
-      <div className="absolute inset-0 z-[1]">
-        <DepthLayers variant="navy" />
-      </div>
-
-      <div className="absolute inset-0 z-[2] opacity-45 md:opacity-75 xl:opacity-100">
-        <LazyThree rootMargin="300px" fallback={null}>
-          <PanelCanvas isActive={isActive} cameraPosition={[0, 0, 7]} envPreset="city">
-            <DeliveriesScene />
-          </PanelCanvas>
-        </LazyThree>
-      </div>
-
+    <div className="relative flex h-full w-screen shrink-0 items-center justify-center overflow-hidden bg-[#050d1a]">
       <div
-        className="pointer-events-none absolute inset-0 z-[3] bg-navy/30 md:bg-transparent"
+        className="absolute inset-0 z-0"
         aria-hidden
+        style={{ background: 'radial-gradient(circle at 70% 50%, #0a1830 0%, #050d1a 70%)' }}
+      />
+
+      {/* Grid animado */}
+      <motion.div
+        animate={reduced ? undefined : { x: [0, 60, 0], y: [0, -30, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute inset-0 z-0 opacity-[0.12]"
+        aria-hidden
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(74,158,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(74,158,255,0.6) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
       />
 
       <div
@@ -475,12 +472,12 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
           gap: 'max(1.5rem, 3vw)',
         }}
       >
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-6">
           <div>
-            <GlowNumber isActive={isActive}>
+            <GlowNumber isActive={isActive} color="rgba(0, 229, 255, 0.4)">
               <div
-                className="font-anton text-cream leading-[0.85] tracking-tight"
-                style={{ fontSize: 'var(--text-numeral-xl)' }}
+                className="font-anton leading-[0.85] tracking-tight"
+                style={{ fontSize: 'var(--text-numeral-xl)', color: '#F1F1F1' }}
               >
                 <CountUp to={33} prefix="+" resetKey={isActive} duration={2.2} />
               </div>
@@ -491,15 +488,16 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
             initial={{ scaleX: 0 }}
             animate={isActive ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 0.9, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-cream/15 mt-2 h-px w-full max-w-md origin-left md:mt-3"
+            className="mt-2 h-px w-full max-w-md origin-left md:mt-3"
+            style={{ backgroundColor: 'rgba(74, 158, 255, 0.3)' }}
           />
 
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-cream/90 mt-2 max-w-md leading-snug md:mt-3"
-            style={{ fontSize: 'var(--text-body)' }}
+            className="mt-2 max-w-md leading-snug md:mt-3"
+            style={{ fontSize: 'var(--text-body)', color: 'rgba(241, 241, 241, 0.9)' }}
           >
             <Typewriter
               text="soluções sob medida entregues, de automações a dashboards"
@@ -516,24 +514,28 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/15 bg-navy/40 rounded-2xl border backdrop-blur-lg"
-              style={{ padding: 'max(0.875rem, 1.4vw)' }}
+              className="rounded-2xl border backdrop-blur-lg"
+              style={{
+                padding: 'max(0.875rem, 1.4vw)',
+                borderColor: 'rgba(74, 158, 255, 0.25)',
+                backgroundColor: 'rgba(74, 158, 255, 0.05)',
+              }}
             >
               <div
-                className="text-cream font-bold"
-                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+                className="font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)', color: '#F1F1F1' }}
               >
                 <CountUp to={14} prefix="+" resetKey={isActive} />
               </div>
               <p
-                className="text-cream mt-1 font-bold leading-snug"
-                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+                className="mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)', color: '#F1F1F1' }}
               >
                 Softwares e automações sob medida
               </p>
               <p
-                className="text-cream/80 mt-1.5 leading-snug"
-                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+                className="mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)', color: 'rgba(241, 241, 241, 0.8)' }}
               >
                 +70 usuários ativos e 7 áreas atendidas
               </p>
@@ -541,8 +543,12 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
                 {['Logística', 'Fintechs', 'Advocacia', 'Marketing'].map((t) => (
                   <span
                     key={t}
-                    className="border-cream/25 text-cream/85 rounded-full border px-2 py-0.5"
-                    style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
+                    className="rounded-full border px-2 py-0.5"
+                    style={{
+                      fontSize: 'max(0.625rem, 0.7vw)',
+                      borderColor: 'rgba(74, 158, 255, 0.3)',
+                      color: 'rgba(74, 158, 255, 0.85)',
+                    }}
                   >
                     {t}
                   </span>
@@ -554,45 +560,54 @@ function PanelDeliveries({ isActive }: { isActive: boolean }) {
               initial={{ opacity: 0, y: 30 }}
               animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
-              className="border-cream/15 bg-navy/40 rounded-2xl border backdrop-blur-lg"
-              style={{ padding: 'max(0.875rem, 1.4vw)' }}
+              className="rounded-2xl border backdrop-blur-lg"
+              style={{
+                padding: 'max(0.875rem, 1.4vw)',
+                borderColor: 'rgba(74, 158, 255, 0.25)',
+                backgroundColor: 'rgba(74, 158, 255, 0.05)',
+              }}
             >
               <div
-                className="text-cream font-bold"
-                style={{ fontSize: 'max(1.125rem, 1.5vw)' }}
+                className="font-bold"
+                style={{ fontSize: 'max(1.125rem, 1.5vw)', color: '#F1F1F1' }}
               >
                 <CountUp to={19} prefix="+" resetKey={isActive} />
               </div>
               <p
-                className="text-cream mt-1 font-bold leading-snug"
-                style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
+                className="mt-1 font-bold leading-snug"
+                style={{ fontSize: 'max(0.75rem, 0.9vw)', color: '#F1F1F1' }}
               >
                 Projetos de Business Intelligence
               </p>
               <p
-                className="text-cream/80 mt-1.5 leading-snug"
-                style={{ fontSize: 'max(0.6875rem, 0.75vw)' }}
+                className="mt-1.5 leading-snug"
+                style={{ fontSize: 'max(0.6875rem, 0.75vw)', color: 'rgba(241, 241, 241, 0.8)' }}
               >
                 +27 dashboards, KPIs monitorados e 107 usuários ativos
               </p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {['Power B.I', 'Python', 'Databricks', 'SQL', 'Cloud', 'Power Automate', 'HTML & CSS'].map(
-                  (t) => (
-                    <span
-                      key={t}
-                      className="border-cream/25 text-cream/85 rounded-full border px-2 py-0.5"
-                      style={{ fontSize: 'max(0.625rem, 0.7vw)' }}
-                    >
-                      {t}
-                    </span>
-                  ),
-                )}
+                {['Power B.I', 'Python', 'Databricks', 'SQL', 'Cloud', 'Power Automate'].map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border px-2 py-0.5"
+                    style={{
+                      fontSize: 'max(0.625rem, 0.7vw)',
+                      borderColor: 'rgba(74, 158, 255, 0.3)',
+                      color: 'rgba(74, 158, 255, 0.85)',
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
               </div>
             </motion.div>
           </div>
         </div>
 
-        <div className="hidden lg:block lg:col-span-5" />
+        {/* Dashboard wireframe — ao lado no desktop, fundo discreto no mobile */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-25 lg:relative lg:col-span-6 lg:opacity-100">
+          <DashboardWireframe />
+        </div>
       </div>
     </div>
   )
