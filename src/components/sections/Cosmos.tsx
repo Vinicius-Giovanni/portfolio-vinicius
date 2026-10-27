@@ -19,14 +19,14 @@ const CARDS: Card[] = [
     icon: Workflow,
     title: 'O que construímos',
     description:
-      'A Cosmos opera sob o modelo Service as Software: assume a execução do trabalho em vez de entregar uma ferramenta para o cliente operar. Os contratos são definidos sobre KPIs em três frentes: aquisição qualificada, eficiência operacional e visão de negócio. A execução é feita por agentes de IA auditados pelo Cosmos Trust AI, framework interno de verificação. O que se contrata é o resultado medido, não a licença do software.',
+      'A estrutura comercial e operacional da Cosmos é organizada em três camadas evolutivas, projetadas para realizar a transição gradual do desenvolvimento sob medida para a padronização e centralização tecnológica. A metodologia consiste em mapear a operação do cliente de forma personalizada, consolidar os parâmetros de conformidade e, subsequencialmente, industrializar os fluxos de trabalho e as camadas de execução cognitiva ao longo da vigência contratual.',
   },
   {
     number: '02',
     icon: Layers,
     title: 'Como trabalhamos',
     description:
-      ' trabalho da Cosmos segue quatro fases, cada uma com entregável definido. A primeira é o diagnóstico, com quantificação do impacto financeiro e mapeamento das causas. A segunda é a definição do resultado contratado, com KPIs mensuráveis, prazo de apuração e critério de encerramento. A terceira é a construção da solução, executada por agentes de IA auditados pelo Cosmos Trust AI. A quarta é a operação assistida, com relatórios semanais de acompanhamento até o KPI ser atingido. O projeto só é considerado concluído quando o KPI acordado é atingido. A responsabilidade pela entrega é da Cosmos durante todo o ciclo.',
+      'O diagnóstico consiste em uma avaliação quantitativa estruturada para identificar ineficiências operacionais, gargalos de produtividade e oportunidades de otimização financeira nos processos do cliente. A entrega constitui um estudo de viabilidade técnica e financeira (business case) fundamentado em dados empíricos, preterindo relatórios conceituais de caráter exclusivamente consultivo.',
   },
   {
     number: '03',
