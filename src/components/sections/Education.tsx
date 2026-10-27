@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useReducedMotion, useInView } from 'motion/react'
-import { Award, BookOpen, ExternalLink } from 'lucide-react'
+import { Award, BookOpen } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { cn } from '@/lib/utils'
 
