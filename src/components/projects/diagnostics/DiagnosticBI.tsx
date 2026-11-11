@@ -29,7 +29,7 @@ export function DiagnosticBI({ accentColor }: { accentColor: string }) {
   const convergedScale = useTransform(scrollYProgress, [0.75, 0.95], [0.8, 1])
 
   return (
-    <section ref={ref} className="relative h-[180vh]">
+    <section ref={ref} className="relative h-[130vh]">
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden px-4 pt-16">
         <div className="relative w-full max-w-4xl" style={{ minHeight: '60vh' }}>
           {/* ATO 1: 3 CARDS */}

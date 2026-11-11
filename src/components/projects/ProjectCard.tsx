@@ -5,7 +5,7 @@ import type { Project } from '@/data/projects'
 import { cn } from '@/lib/utils'
 
 const STATUS_LABEL: Record<Project['status'], string> = {
-  anonymized: 'NDA · Anonimizado',
+  anonymized: 'Anonimizado · NDA',
   live: 'Live',
   'in-development': 'Em breve',
 }
@@ -50,27 +50,11 @@ export function ProjectCard({
           aria-hidden
         />
 
-        {/* Carimbo "DECLASSIFIED" no hover */}
-        <div
-          className="pointer-events-none absolute top-6 right-6 opacity-0 transition-all duration-500 group-hover:rotate-[-8deg] group-hover:opacity-100 md:top-10 md:right-10"
-          aria-hidden
-        >
-          <span
-            className="border-2 px-3 py-1.5 font-mono text-[9px] font-bold tracking-[0.2em] uppercase"
-            style={{
-              borderColor: project.accentColor,
-              color: project.accentColor,
-            }}
-          >
-            Declassified
-          </span>
-        </div>
-
-        {/* Header — dossiê + status + ano */}
+        {/* Header — case + status + ano */}
         <div className="relative flex items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-navy/50 uppercase">
-              Dossiê {project.dossierNumber}
+              Case {project.dossierNumber}
             </span>
             <span
               className="h-1 w-1 rounded-full"
@@ -130,7 +114,7 @@ export function ProjectCard({
           </span>
           <div className="flex items-center gap-2">
             <span className="text-navy/50 group-hover:text-navy text-[10px] font-bold tracking-[0.15em] uppercase transition-colors">
-              Ver dossiê
+              Ver case
             </span>
             <ArrowUpRight
               className="text-navy/40 group-hover:text-navy h-4 w-4 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"

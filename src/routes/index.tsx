@@ -1,65 +1,36 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { lazy, Suspense } from 'react'
 import { NavBar } from '@/components/ui/NavBar'
 import { Hero } from '@/components/sections/Hero'
-import { Authority } from '@/components/sections/Authority'
+import { Proof } from '@/components/sections/Proof'
+import { CasesPreview } from '@/components/sections/CasesPreview'
 import { Testimonials } from '@/components/sections/Testimonials'
-import { useScrollSnap } from '@/hooks/useScrollSnap'
-import { useHydrated } from '@/hooks/useHydrated'
+import { About } from '@/components/sections/About'
+import { Stack } from '@/components/sections/Stack'
+import { Journey } from '@/components/sections/Journey'
+import { Education } from '@/components/sections/Education'
+import { Footer } from '@/components/sections/Footer'
+import { InsightsPreview } from '@/components/sections/InsightsPreview'
 
-const About = lazy(() =>
-  import('@/components/sections/About').then((m) => ({ default: m.About })),
-)
-const Deliverables = lazy(() =>
-  import('@/components/sections/Deliverables').then((m) => ({ default: m.Deliverables })),
-)
-const Journey = lazy(() =>
-  import('@/components/sections/Journey').then((m) => ({ default: m.Journey })),
-)
-const Stack = lazy(() =>
-  import('@/components/sections/Stack').then((m) => ({ default: m.Stack })),
-)
-const Education = lazy(() =>
-  import('@/components/sections/Education').then((m) => ({ default: m.Education })),
-)
-const Cosmos = lazy(() =>
-  import('@/components/sections/Cosmos').then((m) => ({ default: m.Cosmos })),
-)
-const Footer = lazy(() =>
-  import('@/components/sections/Footer').then((m) => ({ default: m.Footer })),
-)
-
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/')(({
   component: Home,
-})
+}))
 
 function Home() {
-  useScrollSnap(true)
-  const hydrated = useHydrated()
-
   return (
     <>
       <NavBar />
       <main className="bg-cream text-navy relative">
         <Hero />
-        <Authority />
+        <Proof />
+        <CasesPreview />
         <Testimonials />
-        {hydrated && (
-          <Suspense fallback={<div className="min-h-screen" aria-hidden />}>
-            <About />
-            <Deliverables />
-            <Journey />
-            <Stack />
-            <Education />
-            <Cosmos />
-          </Suspense>
-        )}
+        <InsightsPreview />
+        <About />
+        <Stack />
+        <Journey />
+        <Education />
       </main>
-      {hydrated && (
-        <Suspense fallback={null}>
-          <Footer />
-        </Suspense>
-      )}
+      <Footer />
     </>
   )
 }

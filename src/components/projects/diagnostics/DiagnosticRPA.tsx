@@ -47,7 +47,7 @@ export function DiagnosticRPA({ accentColor }: { accentColor: string }) {
   const rightDone = finalRight >= 300
 
   return (
-    <section ref={ref} className="relative h-[180vh]">
+    <section ref={ref} className="relative h-[130vh]">
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden px-4">
         <div className="w-full max-w-5xl">
           {/* TIMERS */}

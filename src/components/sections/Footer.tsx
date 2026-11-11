@@ -6,12 +6,15 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react'
-import { FileText, Mail, Phone, ExternalLink, ArrowUpRight, ArrowUp } from 'lucide-react'
+import { FileText, Mail, Phone, CalendarDays, ArrowUpRight, ArrowUp } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { TiltCard } from '@/components/ui/TiltCard'
 import { Link } from '@tanstack/react-router'
+import { calUrl, WHATSAPP_URL, EMAIL } from '@/data/site'
+import { track } from '@/lib/track'
+import { cn } from '@/lib/utils'
 
-const HEADLINE = ['VAMOS', 'CONSTRUIR', 'ALGO', 'INCRÍVEL', 'JUNTOS?']
+const HEADLINE = ['Vamos', 'conversar?']
 
 export function Footer() {
   const ref = useRef<HTMLElement>(null)
@@ -80,35 +83,6 @@ export function Footer() {
       </div>
 
       <div className="relative mx-auto w-[min(100%,1280px)]">
-        {/* Availability badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-10 inline-flex items-center gap-2.5 rounded-full border border-cream/15 bg-cream/5 px-4 py-2 backdrop-blur-sm"
-        >
-          <span className="relative flex h-2 w-2">
-            {!reduced && (
-              <>
-                <motion.span
-                  animate={{ scale: [1, 2.5, 1], opacity: [0.6, 0, 0.6] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                  className="bg-emerald-400 absolute inset-0 rounded-full"
-                />
-                <motion.span
-                  animate={{ scale: [1, 1.8, 1], opacity: [0.4, 0, 0.4] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.6 }}
-                  className="bg-emerald-400 absolute inset-0 rounded-full"
-                />
-              </>
-            )}
-            <span className="bg-emerald-400 relative h-2 w-2 rounded-full" />
-          </span>
-          <span className="text-cream/80 text-xs font-medium tracking-wide">
-            Disponível para novos projetos
-          </span>
-        </motion.div>
-
         <SectionLabel variant="light">CONTATO</SectionLabel>
 
         {/* ===== HEADLINE com word reveal ===== */}
@@ -137,39 +111,43 @@ export function Footer() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="text-cream/70 mt-8 max-w-2xl text-[clamp(0.95rem,1.3vw,1.15rem)] leading-relaxed"
         >
-          Estou sempre aberto a novos desafios, projetos freelance pela Cosmos ou oportunidades
-          na área de Engenharia e Análise de Dados. Entre em contato!
+          Agende uma conversa de 30 minutos ou fale pelo WhatsApp.
         </motion.p>
 
         {/* ===== CONTACT CARDS ===== */}
         <div className="mt-16 grid gap-4 md:mt-20 md:grid-cols-2 lg:grid-cols-4">
           <ContactCard
-            href="mailto:viniciusgiovanni588@gmail.com"
-            icon={Mail}
-            label="E-mail"
-            value="viniciusgiovanni588@gmail.com"
-            delay={0.8}
+            href={calUrl('footer')}
+            icon={CalendarDays}
+            label="Agenda"
+            value="Agendar 30 min"
+            external
+            featured
+            dataCta="footer"
+            onClick={() => track('cta_click', { location: 'footer', type: 'agendar' })}
+            delay={0.6}
             inView={inView}
           />
           <ContactCard
-            href="https://wa.me/5511968635390"
+            href={WHATSAPP_URL}
             icon={Phone}
             label="WhatsApp"
             value="11 96863-5390"
             external
-            delay={0.9}
+            dataCta="footer"
+            onClick={() => track('cta_click', { location: 'footer', type: 'whatsapp' })}
+            delay={0.7}
             inView={inView}
           />
           <ContactCard
-            href="https://www.grupocosmos.com.br"
-            icon={ExternalLink}
-            label="Grupo Cosmos"
-            value="grupocosmos.com.br"
-            external
-            delay={1.0}
+            href={`mailto:${EMAIL}`}
+            icon={Mail}
+            label="E-mail"
+            value={EMAIL}
+            delay={0.8}
             inView={inView}
           />
           <ContactCard
@@ -177,7 +155,7 @@ export function Footer() {
             icon={FileText}
             label="Currículo"
             value="Ver / Baixar PDF"
-            delay={1.1}
+            delay={0.9}
             inView={inView}
           />
         </div>
@@ -186,7 +164,7 @@ export function Footer() {
         <motion.div
           initial={{ scaleX: 0 }}
           animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: 1, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
           className="bg-cream/15 mt-20 h-px w-full origin-left"
         />
 
@@ -195,7 +173,7 @@ export function Footer() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.6, delay: 1.3 }}
+            transition={{ duration: 0.6, delay: 1.1 }}
             className="text-cream/50 text-xs leading-relaxed"
           >
             © 2026 Vinícius G Pereira.
@@ -208,7 +186,7 @@ export function Footer() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
             className="text-cream/40 flex items-center gap-2 font-mono text-[10px] font-medium tracking-[0.2em] uppercase"
           >
             <span className="inline-block h-1 w-1 rounded-full bg-cream/40" />
@@ -218,13 +196,13 @@ export function Footer() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.6, delay: 1.45 }}
+            transition={{ duration: 0.6, delay: 1.25 }}
           >
             <Link
               to="/projetos"
               className="text-cream/60 hover:text-cream group inline-flex items-center gap-1.5 text-xs font-medium transition-colors"
             >
-              Ver dossiês
+              Ver cases
               <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </motion.div>
@@ -233,7 +211,7 @@ export function Footer() {
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.5, delay: 1.5 }}
+            transition={{ duration: 0.5, delay: 1.3 }}
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={scrollToTop}
@@ -254,6 +232,9 @@ type ContactCardProps = {
   label: string
   value: string
   external?: boolean
+  featured?: boolean
+  dataCta?: string
+  onClick?: () => void
   delay: number
   inView: boolean
 }
@@ -264,6 +245,9 @@ function ContactCard({
   label,
   value,
   external,
+  featured,
+  dataCta,
+  onClick,
   delay,
   inView,
 }: ContactCardProps) {
@@ -282,7 +266,14 @@ function ContactCard({
           href={href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noopener noreferrer' : undefined}
-          className="group rounded-brand border-cream/15 bg-cream/[0.03] hover:border-cream/40 hover:bg-cream/[0.08] relative flex h-full items-start gap-4 border p-6 backdrop-blur-sm transition-all duration-300 md:p-7"
+          data-cta={dataCta}
+          onClick={onClick}
+          className={cn(
+            'group rounded-brand relative flex h-full items-start gap-4 border p-6 backdrop-blur-sm transition-all duration-300 md:p-7',
+            featured
+              ? 'border-cream/40 bg-cream/[0.08] hover:border-cream/60 hover:bg-cream/[0.12]'
+              : 'border-cream/15 bg-cream/[0.03] hover:border-cream/40 hover:bg-cream/[0.08]',
+          )}
         >
           {/* Glow dourado no hover */}
           <div
@@ -308,7 +299,7 @@ function ContactCard({
               {value}
             </p>
             <p className="text-cream/40 mt-3 flex items-center gap-1 text-[10px] font-medium tracking-wider uppercase transition-colors group-hover:text-cream/70">
-              {external ? 'Abrir' : 'Enviar'}
+              {external ? 'Abrir' : 'Acessar'}
               <ArrowUpRight
                 className="h-3 w-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 aria-hidden

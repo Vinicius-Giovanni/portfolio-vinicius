@@ -82,7 +82,7 @@ export function DiagnosticDataQuality({ accentColor }: { accentColor: string }) 
   const others = isMobile ? OTHERS_MOBILE : OTHERS_DESKTOP
 
   return (
-    <section ref={ref} className="relative h-[180vh]">
+    <section ref={ref} className="relative h-[130vh]">
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden px-4 pt-16">
         <div className="relative w-full max-w-4xl" style={{ minHeight: '70vh' }}>
           {/* ATO 1 — GRID */}

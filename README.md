@@ -630,3 +630,92 @@ Projeto pessoal. Código disponível para referência e aprendizado. Conteúdo (
 ---
 
 **Autor:** Vinícius Giovanni Pereira Barbosa · [LinkedIn](https://www.linkedin.com/in/vinícius-giovanni-139941297) · [GitHub](https://github.com/Vinicius-Giovanni)
+
+---
+
+## Relatório da refatoração (nov/2026)
+
+### 1. Criado
+- `src/data/site.ts`: URLs centrais (Cal.com com UTMs, WhatsApp com mensagem, Email), cargo (`ROLE = 'Analista de Dados'`) e helper `calUrl()`.
+- `src/lib/track.ts`: Utilitário de rastreamento de eventos de analytics (`cta_click`), integrável com Plausible e Umami com verificação segura de SSR.
+- `src/data/evidence.ts`: Níveis de evidência (`comprovado`, `declarado`, `estimado`, `hipotese`), labels e definições para tooltips.
+- `src/data/metrics.ts`: Fonte única de verdade de métricas auditáveis, faixas de prova da home e volumes com evidências e status de validação.
+- `src/components/ui/EvidenceBadge.tsx`: Pill de indicação de evidência com cores por nível e tooltip nativo explicativo.
+- `src/components/sections/Proof.tsx`: Seção "Resultados" substituindo Authority, estática, sem contadores ou parallax, com os 4 números de prova e 2 de volume.
+- `src/components/sections/CasesPreview.tsx`: Grade resumida de cases na home conectada à fonte central de cases.
+- `src/data/insights.ts`: Modelo de dados de Insights com 7 territórios, 12 formatos estruturados, validação em DEV e gate de visibilidade (`HAS_INSIGHTS`).
+- `src/components/insights/InsightCard.tsx`: Card padronizado de insight com território, formato, hook truncado, data, tempo de leitura e tags.
+- `src/components/insights/InsightsList.tsx`: Lista de insights com legenda de evidência, filtros por território, formato e tag sincronizados via URL.
+- `src/components/insights/InsightArticle.tsx`: Layout editorial do artigo com gancho destacado, sumário lateral sticky, seções ordenadas e discussão.
+- `src/components/sections/InsightsPreview.tsx`: Seção da home para prévia de insights, renderizada condicionalmente (`HAS_INSIGHTS`).
+- `src/routes/insights/index.tsx`: Rota da listagem `/insights` com meta tags, noindex preventivo e filtros via query params.
+- `src/routes/insights/$slug.tsx`: Rota de detalhe `/insights/$slug` com loader type-safe, metadados Open Graph e JSON-LD Article.
+
+### 2. Modificado
+- `src/data/projects.ts`: Integrado a `metrics.ts` via `fromMetric`, incorporados `evidence` e `role`, padronizado tempo RPA para "1h → 5 min (-92%)" e anonimizado subtítulo do case 001.
+- `src/routes/index.tsx`: Substituídos imports dinâmicos (`lazy`/`Suspense`/`useHydrated`) por estáticos completos e ajustada ordem estrita da home.
+- `src/components/sections/Hero.tsx`: Corrigido typo `variant: 'ghots'`, reduzido para 2 CTAs ("Agendar 30 min" e "Ver cases"), ajustada linha de prova e posicionamento.
+- `src/components/ui/NavBar.tsx`: Visibilidade imediata desde o primeiro frame, links ordenados (Início, Cases, Insights se ativo, Sobre, Stack, Contato), botão "Agendar 30 min".
+- `src/components/sections/Testimonials.tsx`: Removido autoplay, adicionado campo `short` com citações literais, altura do palco compactada para 60vh.
+- `src/components/sections/About.tsx`: Ajustada altura de scroll, reescrito parágrafo editorial sem menção à Cosmos e focado na transição para dados.
+- `src/components/sections/Stack.tsx`: Removido Java e marquees, adicionados SQL e Databricks, contador dinâmico e chips estáticos de competências.
+- `src/components/sections/Journey.tsx`: Atualizado capítulo "Atual" e parágrafo do cabeçalho, mantida apenas 1 linha de Cosmos em 2026.
+- `src/components/sections/Education.tsx`: Substituída descrição longa por `<details><summary>`, removido watermark gigante e reduzidos paddings/gaps.
+- `src/components/sections/Footer.tsx`: Removidos badges e cards da Cosmos, adicionados 4 cards (Agenda com destaque, WhatsApp, E-mail, Currículo) e link para cases.
+- `src/routes/__root.tsx`: Título e descrição atualizados, imagem apontada para `/og.png`, adicionado JSON-LD `Person`, removidas referências à Cosmos.
+- `src/routes/projetos/$slug.tsx`: Reordenado para "Resultado primeiro" com `ResultsGrid`, removido takeover animado, adicionado papel, bloco CTA e links discretos.
+- `src/components/projects/ProjectCard.tsx`: Removido carimbo Declassified, renomeado "Dossiê" para "Case", status ajustado para "Anonimizado · NDA".
+- `src/components/projects/ProjectGrid.tsx`: Removida barra de filtros redundante e mantido contador limpo de cases.
+- `src/routes/projetos/index.tsx`: Atualizado rótulo para CASES e expurgadas nomenclaturas residuais de "dossiê" e "desclassificados".
+- `src/components/projects/diagnostics/DiagnosticGargalos.tsx`: Altura reduzida de 200vh para 130vh.
+- `src/components/projects/diagnostics/DiagnosticDataQuality.tsx`: Altura reduzida de 180vh para 130vh.
+- `src/components/projects/diagnostics/DiagnosticRPA.tsx`: Altura reduzida de 180vh para 130vh.
+- `src/components/projects/diagnostics/DiagnosticBI.tsx`: Altura reduzida de 180vh para 130vh.
+- `src/data/cv.ts`: Removidas variantes, exportados `SUMMARY` unificado com `METRICS`, `COSMOS` de uma linha e métricas sincronizadas.
+- `src/routes/cv.tsx`: Removido seletor de variante e search params, mantida versão única com impressão nativa.
+- `vite.config.ts`: Removidos chunks legados de Three.js, R3F e utilitários não utilizados.
+- `src/routeTree.gen.ts`: Regenerado via comando oficial `npm run generate-routes`.
+
+### 3. Removido
+- `src/components/sections/Deliverables.tsx`
+- `src/components/sections/Cosmos.tsx`
+- `src/components/sections/Authority.tsx`
+- `src/components/deliverables/FrotaWireframe.tsx`
+- `src/components/deliverables/DashboardWireframe.tsx`
+- `src/hooks/useScrollSnap.ts`
+- `src/hooks/useHydrated.ts`
+- `src/components/ui/CountUp.tsx`
+- `src/components/ui/FlowDiagram.tsx`
+- `src/components/ui/Marquee.tsx`
+- `src/components/ui/Typewriter.tsx`
+
+### 4. O que já estava feito pelo prompt anterior
+- Estrutura base de rotas `/projetos` e `/projetos/$slug` já existente.
+- Estilização com paleta navy/cream e base de tipografia Anton/Inter já configurada.
+- Componente `DiagnosticRenderer` e diagnósticos base já desacoplados em pasta própria.
+
+### 5. Como adicionar um Insight
+1. Abrir `src/data/insights.ts`.
+2. Adicionar um novo objeto ao array `INSIGHTS` preenchendo todos os campos obrigatórios (`slug`, `title`, `date`, `territory`, `format`, `tags`, `evidence`, `hook`, `centralQuestion`, `sections`, `discussion`, `sources`).
+3. Certificar-se de que os títulos em `sections` correspondam rigorosamente aos retornados por `sectionsFor(format)` (incluindo "Interpretação" e "Aplicação prática" ao final).
+4. **Regra de liberação:** A página `/insights` permanece com `robots: noindex` e o link na NavBar / home fica oculto até que existam no mínimo 3 artigos com data ≤ hoje e sem a flag `draft: true` (`HAS_INSIGHTS = PUBLISHED.length >= 3`).
+
+### 6. Pendências para o dono validar
+- [ ] Cargo oficial e data de início como analista (CV diz Jul 2023, Trajetória diz 2024).
+- [ ] Método de cálculo dos R$ 12 mi/ano (estimativa) em 1 linha.
+- [ ] Taxa usada nos R$ 3,6 mi/ano (custo financeiro evitado).
+- [ ] Lista interna que sustenta +14 softwares e +19 projetos de BI.
+- [ ] "0 erros manuais" no case 003 (afirmação absoluta).
+- [ ] Números do DiagnosticBI (92/87/96/94,2%): reais ou ilustrativos? Rotular se ilustrativos.
+- [ ] UNICV: 2028 (CV) ou 2029?
+- [ ] URL do LinkedIn em `cv.ts` contém acento (`vinícius`); conferir se abre.
+- [ ] Link do Cal (`vinicus-giovanni…`): conferir se abre.
+- [ ] Provedor de analytics (Plausible/Umami) e snippet no `__root.tsx`; confirmar se o Cal repassa UTMs.
+- [ ] `role` e `method` dos cases 001 e 004 (não preenchidos).
+- [ ] PDF estático do CV (hoje usa `window.print()`); sitemap e RSS dos Insights (não feitos).
+- [x] `og:image` (existência do arquivo: confirmado `og.png` na pasta `public`, apontado em `__root.tsx`).
+- [ ] Os 3 artigos iniciais dos Insights (array `INSIGHTS` mantido vazio conforme especificação).
+- [ ] README acima desta seção está parcialmente desatualizado (R3F/Three, Deliverables, Cosmos, `compatibility_date`).
+
+### 7. Não testado
+Declara-se explicitamente que **tsc**, **lint**, **build**, **SSR** e **navegação** **não foram executados** nesta sessão por instrução expressa de economia de tokens do protocolo de execução. A validação técnica deve ser executada pelo proprietário do repositório.

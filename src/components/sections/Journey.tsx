@@ -44,7 +44,7 @@ const TIMELINE: Chapter[] = [
   {
     year: 'Atual',
     title: 'Agora',
-    text: 'Conciliando dados e RPA na Casas Bahia e construção da Cosmos',
+    text: 'Analista de dados no Grupo Casas Bahia; Engenharia de Dados na UNICV',
     accent: '#FFD700',
     isCurrent: true,
   },
@@ -112,7 +112,7 @@ export function Journey() {
             className="text-cream/60 max-w-xs text-sm leading-relaxed md:text-right"
             style={{ fontSize: 'var(--text-small)' }}
           >
-            De ajudante interno a analista de dados e fundador. Cinco anos de evolução contínua.
+            De ajudante interno a analista de dados. Cinco anos de evolução contínua.
           </motion.p>
         </div>
 

@@ -3,6 +3,10 @@ import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { calUrl } from '@/data/site'
+import { CTA_LABEL } from '@/data/site'
+import { HAS_INSIGHTS } from '@/data/insights'
+import { track } from '@/lib/track'
 
 type NavLink = {
   label: string
@@ -11,16 +15,25 @@ type NavLink = {
   id: string
 }
 
-const LINKS: NavLink[] = [
-  { label: 'Início', target: '/', type: 'route', id: 'home' },
-  { label: 'Sobre', target: '#sobre', type: 'anchor', id: 'sobre' },
-  { label: 'Projetos', target: '/projetos', type: 'route', id: 'projetos' },
-  { label: 'Stack', target: '#stack', type: 'anchor', id: 'stack' },
-  { label: 'Contato', target: '#contato', type: 'anchor', id: 'contato' },
-]
+function buildLinks(): NavLink[] {
+  const links: NavLink[] = [
+    { label: 'Início', target: '/', type: 'route', id: 'home' },
+    { label: 'Cases', target: '/projetos', type: 'route', id: 'projetos' },
+  ]
+  if (HAS_INSIGHTS) {
+    links.push({ label: 'Insights', target: '/insights', type: 'route', id: 'insights' })
+  }
+  links.push(
+    { label: 'Sobre', target: '#sobre', type: 'anchor', id: 'sobre' },
+    { label: 'Stack', target: '#stack', type: 'anchor', id: 'stack' },
+    { label: 'Contato', target: '#contato', type: 'anchor', id: 'contato' },
+  )
+  return links
+}
+
+const LINKS = buildLinks()
 
 export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
-  const [visible, setVisible] = useState(forceVisible)
   const [active, setActive] = useState<string>('')
   const [mobileOpen, setMobileOpen] = useState(false)
   const reduced = useReducedMotion()
@@ -36,28 +49,12 @@ export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
     restDelta: 0.001,
   })
 
-  // Visibilidade: em páginas que não são home, sempre visível
-  useEffect(() => {
-    if (forceVisible) {
-      setVisible(true)
-      return
-    }
-    if (!isHome) {
-      setVisible(true)
-      return
-    }
-    const onScroll = () => {
-      setVisible(window.scrollY > window.innerHeight * 0.8)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [forceVisible, isHome])
-
-  // Detecção de seção ativa (só na home)
+  // Detecção de seção ativa
   useEffect(() => {
     if (!isHome) {
-      setActive(pathname.startsWith('/projetos') ? 'projetos' : '')
+      if (pathname.startsWith('/projetos')) setActive('projetos')
+      else if (pathname.startsWith('/insights')) setActive('insights')
+      else setActive('')
       return
     }
     const anchorLinks = LINKS.filter((l) => l.type === 'anchor')
@@ -94,9 +91,7 @@ export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
       return
     }
 
-    // Link de âncora
     if (isHome) {
-      // Já está na home — scroll normal
       const el = document.getElementById(link.id)
       if (!el) return
       if (window.lenis) {
@@ -105,7 +100,6 @@ export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     } else {
-      // Não está na home — navega pra home, e depois scrolla
       navigate({ to: '/' })
       setTimeout(() => {
         const el = document.getElementById(link.id)
@@ -115,7 +109,7 @@ export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
         } else {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
-      }, 400) // aguarda transição de rota
+      }, 400)
     }
   }
 
@@ -134,78 +128,75 @@ export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
 
   return (
     <>
-      <AnimatePresence>
-        {visible && (
-          <motion.nav
-            initial={{ y: -80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -80, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="border-cream/10 bg-navy/85 fixed top-0 right-0 left-0 z-[100] border-b backdrop-blur-xl print:hidden"
-            role="navigation"
-            aria-label="Navegação principal"
+      <motion.nav
+        initial={forceVisible ? { y: 0, opacity: 1 } : { y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="border-cream/10 bg-navy/85 fixed top-0 right-0 left-0 z-[100] border-b backdrop-blur-xl print:hidden"
+        role="navigation"
+        aria-label="Navegação principal"
+      >
+        <div className="mx-auto flex h-14 w-[min(92%,1280px)] items-center justify-between gap-4">
+          <button
+            onClick={goTop}
+            className="font-anton text-cream text-lg leading-none tracking-tight transition-opacity hover:opacity-70"
+            aria-label="Voltar ao início"
           >
-            <div className="mx-auto flex h-14 w-[min(92%,1280px)] items-center justify-between gap-4">
+            VGP
+          </button>
+
+          <div className="hidden items-center gap-7 md:flex">
+            {LINKS.map((link) => (
               <button
-                onClick={goTop}
-                className="font-anton text-cream text-lg leading-none tracking-tight transition-opacity hover:opacity-70"
-                aria-label="Voltar ao início"
+                key={link.id}
+                onClick={() => goTo(link)}
+                className={cn(
+                  'relative text-[11px] font-bold tracking-[0.2em] uppercase transition-colors',
+                  active === link.id
+                    ? 'text-cream'
+                    : 'text-cream/50 hover:text-cream/85',
+                )}
+                aria-current={active === link.id ? 'page' : undefined}
               >
-                VGP
+                {link.label}
+                {active === link.id && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="bg-cream absolute -bottom-1.5 left-0 right-0 h-px"
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                )}
               </button>
+            ))}
+          </div>
 
-              <div className="hidden items-center gap-7 md:flex">
-                {LINKS.map((link) => (
-                  <button
-                    key={link.id}
-                    onClick={() => goTo(link)}
-                    className={cn(
-                      'relative text-[11px] font-bold tracking-[0.2em] uppercase transition-colors',
-                      active === link.id
-                        ? 'text-cream'
-                        : 'text-cream/50 hover:text-cream/85',
-                    )}
-                    aria-current={active === link.id ? 'page' : undefined}
-                  >
-                    {link.label}
-                    {active === link.id && (
-                      <motion.span
-                        layoutId="nav-active"
-                        className="bg-cream absolute -bottom-1.5 left-0 right-0 h-px"
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
+          <div className="flex items-center gap-3">
+            <a
+              href={calUrl('nav')}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cta="nav"
+              onClick={() => track('cta_click', { location: 'nav', type: 'agendar' })}
+              className="border-cream/20 text-cream hover:border-cream/50 hover:bg-cream/5 hidden rounded-full border px-4 py-1.5 text-xs font-bold transition-colors md:inline-flex"
+            >
+              {CTA_LABEL}
+            </a>
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="text-cream -mr-2 p-2 md:hidden"
+              aria-label="Abrir menu"
+            >
+              <Menu className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+        </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() =>
-                    goTo({ label: 'Contato', target: '#contato', type: 'anchor', id: 'contato' })
-                  }
-                  className="border-cream/20 text-cream hover:border-cream/50 hover:bg-cream/5 hidden rounded-full border px-4 py-1.5 text-xs font-bold transition-colors md:inline-flex"
-                >
-                  Conversar
-                </button>
-                <button
-                  onClick={() => setMobileOpen(true)}
-                  className="text-cream -mr-2 p-2 md:hidden"
-                  aria-label="Abrir menu"
-                >
-                  <Menu className="h-5 w-5" aria-hidden />
-                </button>
-              </div>
-            </div>
-
-            <motion.div
-              style={{ scaleX: progress }}
-              className="bg-cream/80 shadow-[0_0_8px_rgba(237,230,216,0.4)] absolute right-0 bottom-0 left-0 h-[2px] origin-left"
-              aria-hidden
-            />
-          </motion.nav>
-        )}
-      </AnimatePresence>
+        <motion.div
+          style={{ scaleX: progress }}
+          className="bg-cream/80 shadow-[0_0_8px_rgba(237,230,216,0.4)] absolute right-0 bottom-0 left-0 h-[2px] origin-left"
+          aria-hidden
+        />
+      </motion.nav>
 
       <AnimatePresence>
         {mobileOpen && (
@@ -269,14 +260,16 @@ export function NavBar({ forceVisible = false }: { forceVisible?: boolean }) {
               </nav>
 
               <div className="mt-auto pt-8">
-                <button
-                  onClick={() =>
-                    goTo({ label: 'Contato', target: '#contato', type: 'anchor', id: 'contato' })
-                  }
-                  className="bg-cream text-navy w-full rounded-full py-3.5 text-sm font-bold transition-opacity hover:opacity-90"
+                <a
+                  href={calUrl('nav')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cta="nav"
+                  onClick={() => track('cta_click', { location: 'nav', type: 'agendar' })}
+                  className="bg-cream text-navy block w-full rounded-full py-3.5 text-center text-sm font-bold transition-opacity hover:opacity-90"
                 >
-                  Conversar
-                </button>
+                  {CTA_LABEL}
+                </a>
               </div>
             </motion.aside>
           </>

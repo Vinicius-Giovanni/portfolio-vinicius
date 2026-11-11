@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
@@ -8,7 +8,7 @@ type Testimonial = {
   role: string
   company?: string
   relationship: 'Gestor direto' | 'Sênior' | 'Mentorado' | 'Colega'
-  quote: string
+  short: string
   initials: string
   accent: string
   imageUrl?: string
@@ -21,8 +21,8 @@ const TESTIMONIALS: Testimonial[] = [
     role: 'Coordenador de Operações',
     company: 'Grupo Casas Bahia',
     relationship: 'Gestor direto',
-    quote:
-      'Tive a satisfação de trabalhar diretamente com este profissional, sendo seu gestor direto, e posso afirmar que é um talento diferenciado. Autodidata, analítico, comunicativo e com excelente relacionamento interpessoal, destaca-se pela capacidade de aprender rapidamente, identificar oportunidades e transformar desafios em soluções eficientes. Seu conhecimento em linguagens de programação e sua habilidade no desenvolvimento de automações e dashboards gerenciais contribuíram significativamente para a otimização de processos, ganho de produtividade e melhoria na tomada de decisões.',
+    short:
+      'Tive a satisfação de trabalhar diretamente com este profissional, sendo seu gestor direto, e posso afirmar que é um talento diferenciado. Autodidata, analítico, comunicativo e com excelente relacionamento interpessoal, destaca-se pela capacidade de aprender rapidamente, identificar oportunidades e transformar desafios em soluções eficientes…',
     initials: 'LC',
     accent: '#4A90B8',
     imageUrl: '/assets/clients/leonardo.svg',
@@ -33,8 +33,8 @@ const TESTIMONIALS: Testimonial[] = [
     role: 'Supervisor de Operações',
     company: 'Grupo Casas Bahia',
     relationship: 'Gestor direto',
-    quote:
-      'Profissional de alta performance, com excelente capacidade de transformar desafios em soluções eficientes. Possui forte conhecimento em Power BI, Excel e automação, e desenvolve ferramentas que facilitam o dia a dia da operação. Um exemplo é o dashboard que criou para controlar toda a demanda de expedição, que ajuda a gerência a fazer previsões com base no mesmo período de anos anteriores e contribui diretamente na tomada de decisão. Comprometido, disciplinado e proativo, destaca-se pela qualidade das entregas e pela busca constante por conhecimento e melhoria.',
+    short:
+      'Profissional de alta performance, com excelente capacidade de transformar desafios em soluções eficientes. Possui forte conhecimento em Power BI, Excel e automação, e desenvolve ferramentas que facilitam o dia a dia da operação…',
     initials: 'JM',
     accent: '#D97706',
     imageUrl: '/assets/clients/jonathan.svg',
@@ -44,8 +44,8 @@ const TESTIMONIALS: Testimonial[] = [
     name: 'Thainá Souza',
     role: 'Software Engineering Student',
     relationship: 'Mentorado',
-    quote:
-      'O Vinícius combina um raciocínio lógico afiado com uma criatividade impressionante para solucionar problemas complexos, sempre trazendo respostas práticas e eficientes. Além do sólido domínio técnico, seu diferencial está nas habilidades interpessoais. Possui uma comunicação clara e assertiva, transitando com facilidade entre diferentes perfis e interagindo com posições estratégicas de liderança com muita segurança e respeito. Para além de suas entregas técnicas, se destaca como um excelente mentor — generosidade natural para compartilhar conhecimento e ensinar com didática impecável, clara e acessível.',
+    short:
+      'O Vinícius combina um raciocínio lógico afiado com uma criatividade impressionante para solucionar problemas complexos, sempre trazendo respostas práticas e eficientes. Além do sólido domínio técnico, seu diferencial está nas habilidades interpessoais…',
     initials: 'TS',
     accent: '#6B21A8',
     imageUrl: '/assets/clients/thaina.svg',
@@ -56,7 +56,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: 'Coordenador de Operações Logísticas',
     company: 'Grupo Casas Bahia',
     relationship: 'Sênior',
-    quote:
+    short:
       'Vinícius, você é um ótimo profissional, com altas habilidades em desenvolver ferramentas que facilitam nossas visões operacionais.',
     initials: 'ES',
     accent: '#10B981',
@@ -68,8 +68,8 @@ const TESTIMONIALS: Testimonial[] = [
     role: 'Assistente Administrativo',
     company: 'Grupo Casas Bahia',
     relationship: 'Colega',
-    quote:
-      'Tive a oportunidade de trabalhar com este colega e posso destacar seu profissionalismo, comprometimento e dedicação às atividades desempenhadas. É uma pessoa responsável, colaborativa e sempre disposta a contribuir para o bom desempenho da equipe, demonstrando respeito, ética e vontade de aprender. Sua postura profissional e facilidade para trabalhar em equipe fazem dele um excelente colega de trabalho.',
+    short:
+      'Tive a oportunidade de trabalhar com este colega e posso destacar seu profissionalismo, comprometimento e dedicação às atividades desempenhadas. É uma pessoa responsável, colaborativa e sempre disposta a contribuir para o bom desempenho da equipe…',
     initials: 'PD',
     accent: '#F59E0B',
     imageUrl: '/assets/clients/patino.svg',
@@ -77,7 +77,6 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ]
 
-const AUTO_ADVANCE_MS = 9000
 const TOTAL = TESTIMONIALS.length
 
 function LinkedInIcon({ className }: { className?: string }) {
@@ -112,15 +111,6 @@ export function Testimonials() {
     setIndex(i)
   }
 
-  useEffect(() => {
-    if (reduced) return
-    const id = setInterval(() => {
-      setDirection(1)
-      setIndex((i) => (i + 1) % TOTAL)
-    }, AUTO_ADVANCE_MS)
-    return () => clearInterval(id)
-  }, [reduced, index])
-
   return (
     <section className="bg-cream relative overflow-hidden py-24 md:py-32">
       <div
@@ -151,9 +141,9 @@ export function Testimonials() {
         </div>
       </div>
 
-      {/* Palco — altura aumentada pra caber quotes longas */}
+      {/* Palco */}
       <div
-        className="relative mx-auto mt-12 flex h-[80vh] min-h-[620px] max-h-[820px] w-[min(92%,1100px)] items-center justify-center md:mt-16"
+        className="relative mx-auto mt-12 flex h-[60vh] min-h-[460px] max-h-[560px] w-[min(92%,1100px)] items-center justify-center md:mt-16"
         style={{ perspective: 1600 }}
         onTouchStart={(e) => {
           touchStart.current = e.touches[0].clientX
@@ -250,14 +240,14 @@ export function Testimonials() {
               {active.relationship}
             </div>
 
-            {/* Depoimento — reduzido */}
+            {/* Depoimento */}
             <p className="text-navy relative z-10 max-w-2xl text-center text-[clamp(0.75rem,1.1vw,0.9rem)] leading-relaxed font-medium md:text-[0.9rem]">
-              &ldquo;{active.quote}&rdquo;
+              &ldquo;{active.short}&rdquo;
             </p>
 
             <div className="bg-navy/15 h-px w-10" />
 
-            {/* Autor — reduzido */}
+            {/* Autor */}
             <div className="flex flex-col items-center gap-1.5 text-center">
               <p className="text-navy text-sm font-bold md:text-base">{active.name}</p>
               <p className="text-navy/60 text-[10px] font-medium md:text-xs">

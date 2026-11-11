@@ -55,7 +55,7 @@ export function DiagnosticGargalos({ accentColor }: { accentColor: string }) {
   const finalMoney = reduced ? 30 : money
 
   return (
-    <section ref={ref} className="relative h-[200vh]">
+    <section ref={ref} className="relative h-[130vh]">
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden px-4 pt-16">
         <div className="w-full max-w-5xl">
           {/* FLOW VISUAL — vertical no mobile, horizontal no desktop */}

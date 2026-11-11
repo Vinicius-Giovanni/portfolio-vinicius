@@ -1,6 +1,5 @@
 import { useRef, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
-import { useNavigate } from '@tanstack/react-router'
 import {
   SiPython,
   SiDatabricks,
@@ -11,16 +10,12 @@ import {
 } from 'react-icons/si'
 import { BarChart3, Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { calUrl } from '@/data/site'
+import { METRICS } from '@/data/metrics'
+import { track } from '@/lib/track'
 
-function scrollToId(id: string) {
-  const target = document.querySelector(id)
-  if (!target) return
-  if (window.lenis) {
-    window.lenis.scrollTo(target as HTMLElement)
-  } else {
-    target.scrollIntoView({ behavior: 'smooth' })
-  }
-}
+// ROLE is imported from site.ts via metrics; fallback inline
+const HERO_ROLE = 'Analista de Dados'
 
 const WORD_STYLE = {
   fontSize: 'clamp(2rem, 17.5vw, 25rem)',
@@ -39,10 +34,11 @@ const FLOATING_TECHS = [
   { Icon: SiHtml5, pos: 'bottom-[32%] right-[12%]', delay: 2.1, hideOnMobile: true },
 ]
 
+const capMet = METRICS['cap-liberado']
+
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
-  const navigate = useNavigate()
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -53,33 +49,8 @@ export function Hero() {
   const yPhoto = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -60])
   const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0])
 
-  const buttons = [
-    {
-      label: 'Conhecer Cosmos →',
-      variant: 'solid' as const,
-      onClick: () => window.open('https://www.grupocosmos.com.br', '_blank', 'noopener'),
-    },
-    {
-      label: 'Ver Projetos →',
-      variant: 'ghots' as const,
-      onClick: () => navigate({ to: '/projetos' }),
-    },
-    {
-      label: 'Ver Entregáveis →',
-      variant: 'solid' as const,
-      onClick: () => scrollToId('#entregaveis'),
-    },
-    {
-      label: 'Entrar em Contato →',
-      variant: 'solid' as const,
-      onClick: () => scrollToId('#contato'),
-    },
-  ]
-
   return (
     <section ref={ref} className="h-screen-safe relative w-full overflow-hidden">
-      {/* Partículas CSS no lugar do Canvas 3D */}
-
       {!reduced && (
         <motion.div
           animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.85, 0.5] }}
@@ -162,7 +133,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-[max(1.5rem,4vh)] left-[max(1.25rem,3vw)] z-40"
+        className="absolute top-[max(4.5rem,8vh)] left-[max(1.25rem,3vw)] z-40"
       >
         <p
           className="text-navy font-bold tracking-tight"
@@ -174,22 +145,36 @@ export function Hero() {
           className="text-navy/60 mt-1 font-medium"
           style={{ fontSize: 'max(0.75rem, 0.9vw)' }}
         >
-          Engenharia de Software &amp; Dados
+          {HERO_ROLE} · Engenharia de Dados
         </p>
+        {capMet && (
+          <p
+            className="text-navy/50 mt-2 max-w-xs font-medium leading-snug"
+            style={{ fontSize: 'max(0.7rem, 0.85vw)' }}
+          >
+            {capMet.value} de capital liberado em operação de +100 mil peças/dia
+          </p>
+        )}
       </motion.div>
 
       {/* Botões */}
-      <div className="absolute bottom-[max(1.5rem,4vh)] left-1/2 z-40 flex w-[min(92%,1200px)] -translate-x-1/2 flex-col items-stretch gap-2.5 sm:grid sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
-        {buttons.map((btn, i) => (
-          <HeroButton
-            key={btn.label}
-            variant={btn.variant}
-            onClick={btn.onClick}
-            delay={0.55 + i * 0.15}
-          >
-            {btn.label}
-          </HeroButton>
-        ))}
+      <div className="absolute bottom-[max(1.5rem,4vh)] left-1/2 z-40 flex w-[min(92%,600px)] -translate-x-1/2 flex-col items-stretch gap-2.5 sm:grid sm:grid-cols-2 sm:gap-3">
+        <HeroButton
+          href={calUrl('hero')}
+          variant="solid"
+          delay={0.55}
+          onClick={() => track('cta_click', { location: 'hero', type: 'agendar' })}
+          data-cta="hero"
+        >
+          Agendar 30 min
+        </HeroButton>
+        <HeroButton
+          linkTo="/projetos"
+          variant="ghost"
+          delay={0.7}
+        >
+          Ver cases
+        </HeroButton>
       </div>
     </section>
   )
@@ -197,39 +182,56 @@ export function Hero() {
 
 type HeroButtonProps = {
   variant: 'solid' | 'ghost'
-  onClick: () => void
   delay: number
   children: ReactNode
+  href?: string
+  linkTo?: string
+  onClick?: () => void
+  'data-cta'?: string
 }
 
-function HeroButton({ variant, onClick, delay, children }: HeroButtonProps) {
-  return (
-    <motion.button
-      type="button"
-      initial={{ opacity: 0, y: 30, boxShadow: '0 0 0 rgba(11,31,58,0)' }}
-      animate={{ opacity: 1, y: 0, boxShadow: '0 0 0 rgba(11,31,58,0)' }}
-      transition={{
-        opacity: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
-        y: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
-        boxShadow: { duration: 0.6, delay },
-      }}
-      whileHover={{
-        y: -4,
-        boxShadow: '0 12px 28px rgba(11,31,58,0.18)',
-        transition: { duration: 0.15, delay: 0, ease: 'easeOut' },
-      }}
-      whileTap={{
-        y: -2,
-        transition: { duration: 0.1, delay: 0 },
-      }}
-      onClick={onClick}
-      style={{ fontSize: 'max(0.875rem, 0.95vw)' }}
-      className={cn(
-        'rounded-brand flex min-h-11 items-center justify-center px-4 py-3 text-center font-bold whitespace-nowrap md:min-h-12 md:px-5',
-        variant === 'solid' ? 'bg-navy text-cream' : 'bg-cream text-navy border-navy border',
-      )}
-    >
-      {children}
-    </motion.button>
+function HeroButton({ variant, delay, children, href, linkTo, onClick, 'data-cta': dataCta }: HeroButtonProps) {
+  const classes = cn(
+    'rounded-brand flex min-h-11 items-center justify-center px-4 py-3 text-center font-bold whitespace-nowrap md:min-h-12 md:px-5',
+    variant === 'solid' ? 'bg-navy text-cream' : 'bg-cream text-navy border-navy border',
   )
+  const motionProps = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: {
+      opacity: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+      y: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+    },
+    whileHover: { y: -4, boxShadow: '0 12px 28px rgba(11,31,58,0.18)', transition: { duration: 0.15, delay: 0 } },
+    whileTap: { y: -2, transition: { duration: 0.1, delay: 0 } },
+    style: { fontSize: 'max(0.875rem, 0.95vw)' },
+  }
+
+  if (href) {
+    return (
+      <motion.a
+        {...motionProps}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-cta={dataCta}
+        onClick={onClick}
+        className={classes}
+      >
+        {children}
+      </motion.a>
+    )
+  }
+
+  if (linkTo) {
+    return (
+      <motion.div {...motionProps} className={classes}>
+        <a href={linkTo} className="flex w-full items-center justify-center">
+          {children}
+        </a>
+      </motion.div>
+    )
+  }
+
+  return null
 }

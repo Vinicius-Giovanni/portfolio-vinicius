@@ -1,136 +1,104 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Printer } from 'lucide-react'
 import {
   PROFILE,
+  SUMMARY,
   EXPERIENCE,
+  COSMOS,
   EDUCATION,
   SKILLS,
-  CV_VARIANTS,
-  type CVVariant,
 } from '@/data/cv'
-import { NavBar } from '#/components/ui/NavBar'
+import { NavBar } from '@/components/ui/NavBar'
 
 export const Route = createFileRoute('/cv')({
-  validateSearch: (search: Record<string, unknown>): { v: CVVariant } => ({
-    v: search.v === 'tech' ? 'tech' : 'corporate',
-  }),
   component: CVPage,
 })
 
 function CVPage() {
-  const { v } = Route.useSearch()
-  const navigate = useNavigate()
-  const variant = CV_VARIANTS[v]
-
-  const handlePrint = () => window.print()
-
-  const setVariant = (next: CVVariant) => {
-    navigate({ to: '/cv', search: { v: next } })
+  const handlePrint = () => {
+    if (typeof window !== 'undefined') {
+      window.print()
+    }
   }
 
   return (
     <>
-    <NavBar forceVisible />
-    <div className="min-h-screen bg-[#ede6d8] text-[#0b1f3a] pt-14 print:bg-white print:pt-0">
-      {/* Barra de ações — some na impressão */}
-      <div className="sticky top-14 z-50 bg-[#ede6d8] print:hidden">
-        <div className="mx-auto flex max-w-[210mm] flex-wrap items-center justify-between gap-3 px-4 py-4">
-          <div className="flex items-center gap-2 rounded-full bg-white/60 p-1 backdrop-blur-sm">
-            {(Object.keys(CV_VARIANTS) as CVVariant[]).map((key) => (
-              <button
-                key={key}
-                onClick={() => setVariant(key)}
-                className={`rounded-full px-4 py-2 text-xs font-bold transition ${
-                  v === key
-                    ? 'bg-[#0b1f3a] text-[#ede6d8]'
-                    : 'text-[#0b1f3a]/60 hover:text-[#0b1f3a]'
-                }`}
-              >
-                {CV_VARIANTS[key].label}
-              </button>
-            ))}
+      <NavBar forceVisible />
+      <div className="min-h-screen bg-[#ede6d8] pt-14 text-[#0b1f3a] print:bg-white print:pt-0">
+        {/* Barra de ações — some na impressão */}
+        <div className="sticky top-14 z-50 bg-[#ede6d8] print:hidden">
+          <div className="mx-auto flex max-w-[210mm] items-center justify-end px-4 py-4">
+            <button
+              onClick={handlePrint}
+              className="flex items-center gap-2 rounded-full bg-[#0b1f3a] px-5 py-2.5 text-sm font-bold text-[#ede6d8] transition hover:opacity-90"
+            >
+              <Printer className="h-4 w-4" />
+              Baixar PDF
+            </button>
           </div>
-
-          <button
-            onClick={handlePrint}
-            className="flex items-center gap-2 rounded-full bg-[#0b1f3a] px-5 py-2.5 text-sm font-bold text-[#ede6d8] transition hover:opacity-90"
-          >
-            <Printer className="h-4 w-4" />
-            Baixar PDF
-          </button>
         </div>
-        <p className="mx-auto max-w-[210mm] px-4 pb-3 text-center text-[11px] text-[#0b1f3a]/50">
-          Versão: {variant.label} — {variant.tagline}
-        </p>
+
+        {/* Folha A4 */}
+        <main className="mx-auto max-w-[210mm] bg-white p-[20mm] shadow-xl print:max-w-none print:p-0 print:shadow-none">
+          {/* Header */}
+          <header className="border-b border-[#0b1f3a]/20 pb-4">
+            <h1 className="text-3xl font-bold tracking-tight">{PROFILE.name}</h1>
+            <p className="mt-1 text-sm text-[#0b1f3a]/70">
+              {PROFILE.location} · {PROFILE.email} · {PROFILE.phone}
+            </p>
+            <p className="mt-0.5 text-sm text-[#0b1f3a]/70">
+              {PROFILE.linkedin} · {PROFILE.github}
+            </p>
+          </header>
+
+          {/* Resumo */}
+          <Section title="Resumo">
+            <p className="text-sm leading-relaxed">{SUMMARY}</p>
+          </Section>
+
+          {/* Habilidades Técnicas */}
+          <Section title="Habilidades Técnicas">
+            <p className="text-sm leading-relaxed">
+              <strong>Dados & BI:</strong> {SKILLS.data}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed">
+              <strong>Automação & Desenvolvimento:</strong> {SKILLS.dev}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed">
+              <strong>Idiomas:</strong> {SKILLS.languages}
+            </p>
+          </Section>
+
+          {/* Experiência */}
+          <Section title="Experiência Profissional">
+            <div className="space-y-4">
+              <JobBlock job={EXPERIENCE.casasBahiaAnalyst} />
+              <JobBlock job={EXPERIENCE.casasBahiaAssistant} />
+              <JobBlock job={EXPERIENCE.casasBahiaHelper} />
+              <CosmosBlock data={COSMOS} />
+            </div>
+          </Section>
+
+          {/* Formação */}
+          <Section title="Formação">
+            <ul className="space-y-1 text-sm leading-relaxed">
+              {EDUCATION.map((edu) => (
+                <li key={edu.title}>
+                  <strong>{edu.title}</strong> — {edu.institution} · {edu.period}
+                </li>
+              ))}
+            </ul>
+          </Section>
+        </main>
+
+        <style>{`
+          @media print {
+            @page { size: A4; margin: 20mm; }
+            body { background: white !important; }
+            .print\\:hidden { display: none !important; }
+          }
+        `}</style>
       </div>
-
-      {/* Folha A4 */}
-      <main className="mx-auto max-w-[210mm] bg-white p-[20mm] shadow-xl print:max-w-none print:p-0 print:shadow-none">
-        {/* Header */}
-        <header className="border-b border-[#0b1f3a]/20 pb-4">
-          <h1 className="text-3xl font-bold tracking-tight">{PROFILE.name}</h1>
-          <p className="mt-1 text-sm text-[#0b1f3a]/70">
-            {PROFILE.location} · {PROFILE.email} · {PROFILE.phone}
-          </p>
-          <p className="mt-0.5 text-sm text-[#0b1f3a]/70">
-            {PROFILE.linkedin} · {PROFILE.github}
-          </p>
-        </header>
-
-        {variant.sectionOrder.map((section) => {
-          if (section === 'summary') {
-            return (
-              <Section key="summary" title="Resumo">
-                <p className="text-sm leading-relaxed">{variant.summary}</p>
-              </Section>
-            )
-          }
-          if (section === 'skills') {
-            return (
-              <Section key="skills" title="Habilidades Técnicas">
-                <p className="text-sm leading-relaxed"><strong>Dados & BI:</strong> {SKILLS.data}</p>
-                <p className="mt-1 text-sm leading-relaxed"><strong>Automação & Desenvolvimento:</strong> {SKILLS.dev}</p>
-                <p className="mt-1 text-sm leading-relaxed"><strong>Idiomas:</strong> {SKILLS.languages}</p>
-              </Section>
-            )
-          }
-          if (section === 'experience') {
-            return (
-              <Section key="experience" title="Experiência Profissional">
-                <div className="space-y-4">
-                  <JobBlock job={EXPERIENCE.casasBahiaAnalyst} />
-                  <JobBlock job={EXPERIENCE.casasBahiaAssistant} />
-                  <JobBlock job={EXPERIENCE.casasBahiaHelper} />
-                  <CosmosBlock data={variant.cosmos} />
-                </div>
-              </Section>
-            )
-          }
-          if (section === 'education') {
-            return (
-              <Section key="education" title="Formação">
-                <ul className="space-y-1 text-sm leading-relaxed">
-                  {EDUCATION.map((edu) => (
-                    <li key={edu.title}>
-                      <strong>{edu.title}</strong> — {edu.institution} · {edu.period}
-                    </li>
-                  ))}
-                </ul>
-              </Section>
-            )
-          }
-          return null
-        })}
-      </main>
-
-      <style>{`
-        @media print {
-          @page { size: A4; margin: 20mm; }
-          body { background: white !important; }
-          .print\\:hidden { display: none !important; }
-        }
-      `}</style>
-    </div>
     </>
   )
 }

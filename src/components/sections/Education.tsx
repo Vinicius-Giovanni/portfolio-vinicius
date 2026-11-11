@@ -163,17 +163,8 @@ function EducationCardView({ card, index }: { card: EducationCard; index: number
         transition={{ duration: 0.8, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="rounded-brand border-navy/15 bg-cream/60 relative overflow-hidden border p-6 shadow-[0_4px_14px_rgba(11,31,58,0.04)] backdrop-blur-sm transition-all duration-500 hover:border-navy/40 hover:bg-cream hover:shadow-[0_20px_50px_-12px_rgba(11,31,58,0.15)] md:p-8"
+        className="rounded-brand border-navy/15 bg-cream/60 relative overflow-hidden border p-4 shadow-[0_4px_14px_rgba(11,31,58,0.04)] backdrop-blur-sm transition-all duration-500 hover:border-navy/40 hover:bg-cream hover:shadow-[0_20px_50px_-12px_rgba(11,31,58,0.15)] md:p-5"
       >
-        {/* Watermark gigante com nome da instituição */}
-        <span
-          className="font-anton text-navy/[0.04] pointer-events-none absolute -top-2 right-4 leading-none select-none md:right-8"
-          style={{ fontSize: 'clamp(3rem, 8vw, 6rem)' }}
-          aria-hidden
-        >
-          {card.institution}
-        </span>
-
         {/* Glow colorido no hover (cor da instituição) */}
         <div
           className="pointer-events-none absolute inset-0 transition-opacity duration-500"
@@ -183,7 +174,7 @@ function EducationCardView({ card, index }: { card: EducationCard; index: number
           }}
         />
 
-        <div className="relative grid gap-6 md:grid-cols-[1fr_2fr] md:gap-10">
+        <div className="relative grid gap-6 md:grid-cols-[1fr_2fr] md:gap-6">
           {/* Coluna esquerda — institution + title */}
           <div>
             <div className="flex items-center gap-2">
@@ -220,9 +211,12 @@ function EducationCardView({ card, index }: { card: EducationCard; index: number
 
           {/* Coluna direita — description + tags */}
           <div>
-            <p className="text-navy/75 text-sm leading-relaxed md:text-base">
-              {card.description}
-            </p>
+            <details className="text-navy/75 text-sm leading-relaxed md:text-base group">
+              <summary className="cursor-pointer text-xs font-bold text-navy/60 hover:text-navy transition-colors select-none">
+                O que aprendi
+              </summary>
+              <p className="mt-2">{card.description}</p>
+            </details>
 
             <div className="mt-5 flex flex-wrap gap-1.5 md:gap-2">
               {card.tags.map((tag, tagIdx) => (

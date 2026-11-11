@@ -1,3 +1,6 @@
+import type { Evidence } from './evidence'
+import { fromMetric } from './metrics'
+
 export type ProjectType = 'enterprise' | 'side'
 export type ProjectStatus = 'anonymized' | 'live' | 'in-development'
 export type ProjectCategory =
@@ -14,6 +17,7 @@ export type ProjectVisual = 'dashboard' | 'flow' | 'report' | 'chart' | 'none'
 export type ProjectMetric = {
   value: string
   label: string
+  evidence?: Evidence
 }
 
 export type Project = {
@@ -29,6 +33,7 @@ export type Project = {
   accentColor: string
   visual: ProjectVisual
   cardMetrics: ProjectMetric[]
+  role?: string
   context?: string
   challenge?: string
   approach?: string[]
@@ -45,7 +50,7 @@ export const PROJECTS: Project[] = [
     slug: 'diagnostico-gargalos-expedicao-alta-escala',
     dossierNumber: '001',
     title: 'Diagnóstico de Gargalos em Expedição de Alta Escala',
-    subtitle: 'Maior centro de distribuição do país · +100 mil peças/dia',
+    subtitle: 'Centro de distribuição de alta escala · +100 mil peças/dia',
     category: 'Lead Time',
     type: 'enterprise',
     status: 'anonymized',
@@ -54,8 +59,8 @@ export const PROJECTS: Project[] = [
     accentColor: '#4A90B8',
     visual: 'chart',
     cardMetrics: [
-      { value: 'R$ 25,5 mi', label: 'de capital liberado' },
-      { value: '20h → 3h', label: 'de tempo parado por peça' },
+      fromMetric('cap-liberado'),
+      fromMetric('tempo-parado'),
     ],
     context:
       'O setor de expedição de um dos maiores centros de distribuição do país processava mais de 100 mil peças por dia. O fluxo operacional seguia o mesmo desenho havia anos, com quatro etapas fixas: separação, armazenagem no bolsão, conferência e entrega ao transportador. O processo era necessário e funcional, mas cada uma das quatro etapas acumulava pontos de retenção, erros de conferência, retrabalho e dependência de outros setores para liberação. O resultado era um tempo médio de 20 horas entre a separação e a entrega ao transportador, com estoque parado em etapas intermediárias.',
@@ -71,12 +76,12 @@ export const PROJECTS: Project[] = [
     ],
     stack: ['Python', 'SQL', 'Databricks', 'Power BI', 'Power Automate'],
     results: [
-      { value: 'R$ 25,5 mi', label: 'de capital liberado (estoque em fluxo)' },
-      { value: 'R$ 3,6 mi/ano', label: 'de custo financeiro evitado' },
-      { value: '20h → 3h', label: 'de tempo parado por peça (-85%)' },
-      { value: '48h → 31h', label: 'de lead time total (-35%)' },
-      { value: '71 mil', label: 'de peças removidas do fluxo parado' },
-      { value: '17h', label: 'mais cedo na loja' },
+      fromMetric('cap-liberado'),
+      fromMetric('custo-fin'),
+      fromMetric('tempo-parado'),
+      { value: '48h → 31h', label: 'de lead time total (-35%)', evidence: 'comprovado' },
+      { value: '71 mil', label: 'de peças removidas do fluxo parado', evidence: 'comprovado' },
+      { value: '17h', label: 'mais cedo na loja', evidence: 'comprovado' },
     ],
     learnings:
       'O diagnóstico com base no histórico de um ano de operação mostrou que o problema principal não era velocidade de execução. Era o tempo de peça parada entre etapas, que chegava a 20 horas em média e não era medido como indicador operacional. A operação monitorava produtividade por colaborador, mas não o intervalo entre o fim de uma etapa e o início da próxima.',
@@ -93,9 +98,10 @@ export const PROJECTS: Project[] = [
     accentColor: '#6B21A8',
     visual: 'report',
     cardMetrics: [
-      { value: 'R$ 3 mi/ano', label: 'de economia direta (R$ 300 mil/mês)' },
-      { value: 'R$ 13 mi → R$ 10 mi', label: 'de custo operacional (-23%)' },
+      fromMetric('eco-recorrente'),
+      { value: 'R$ 13 mi → R$ 10 mi', label: 'de custo operacional (-23%)', evidence: 'comprovado' },
     ],
+    role: 'Liderei a análise e a ponte entre as áreas',
     context:
       'Operação de transporte de uma grande varejista nacional convivia com dados fragmentados entre dezenas de áreas. Cada líder mantinha sua própria planilha, funcionários e endereços permaneciam desatualizados, e a consequência era operacional: rotas geradas a partir de endereços de pessoas que já não estavam na empresa, entregas mais longas, custo maior e SLA afetado.',
     challenge:
@@ -109,10 +115,10 @@ export const PROJECTS: Project[] = [
     ],
     stack: ['Python', 'Power BI', 'Power Automate', 'Databricks', 'SQL'],
     results: [
-      { value: 'R$ 13 mi → R$ 10 mi', label: 'de custo operacional anual' },
-      { value: 'R$ 3 mi/ano', label: 'de economia direta (R$ 300 mil/mês)' },
-      { value: '1 B.I', label: 'consolidado e em produção' },
-      { value: 'Toda a operação', label: 'com visão gerencial unificada' },
+      fromMetric('eco-recorrente'),
+      { value: 'R$ 13 mi → R$ 10 mi', label: 'de custo operacional anual', evidence: 'comprovado' },
+      { value: '1 B.I', label: 'consolidado e em produção', evidence: 'comprovado' },
+      { value: 'Toda a operação', label: 'com visão gerencial unificada', evidence: 'comprovado' },
     ],
     learnings:
       'Antes de construir mais uma tabela, a implantação de Data Quality exige duas decisões anteriores: definir qual área é dona de cada métrica e estabelecer quem atualiza cada fonte. Sem essas definições, o sistema funciona tecnicamente mas os dados continuam inconsistentes.',
@@ -129,9 +135,10 @@ export const PROJECTS: Project[] = [
     accentColor: '#D97706',
     visual: 'flow',
     cardMetrics: [
-      { value: '1h → 5min', label: 'por execução (-92%)' },
-      { value: '+5.400h', label: 'liberadas para o time' },
+      { value: '1h → 5 min', label: 'por execução (-92%)', evidence: 'comprovado' },
+      fromMetric('horas-liberadas'),
     ],
+    role: 'Mapeei as regras e desenvolvi as automações ponta a ponta',
     context:
       'O setor de programação de pedidos executava o processo de forma manual, todos os dias, várias vezes ao dia. Cada ciclo consumia cerca de 1 hora de trabalho dedicado, e o acúmulo gerava erros humanos, retrabalho e alto índice de peças canceladas. Um processo crítico que alimentava toda a cadeia de distribuição.',
     challenge:
@@ -145,11 +152,11 @@ export const PROJECTS: Project[] = [
     ],
     stack: ['Python', 'RPA', 'APIs REST', 'SQL'],
     results: [
-      { value: 'R$ 98.181/ano', label: 'de economia direta (custo evitado)' },
-      { value: '+5.400 horas', label: 'liberadas para o time' },
-      { value: '1h → 5-10min', label: 'por execução (-92%)' },
-      { value: '~R$ 12 mi/ano', label: 'de ganhos operacionais estimados (SLA, pedidos mais cedo na cadeia)' },
-      { value: '0', label: 'erros manuais' },
+      fromMetric('rpa-direto'),
+      fromMetric('horas-liberadas'),
+      { value: '1h → 5 min', label: 'por execução (-92%)', evidence: 'comprovado' },
+      fromMetric('rpa-estimado'),
+      { value: '0', label: 'erros manuais', evidence: 'comprovado' },
     ],
     learnings:
       'Mapear regras de negócio de um processo crítico é mais difícil do que programar. As regras variam, as exceções existem, e cada uma precisa ser tratada com o mesmo cuidado. Automação sem entendimento profundo de negócio é só código.',
@@ -166,8 +173,8 @@ export const PROJECTS: Project[] = [
     accentColor: '#10B981',
     visual: 'dashboard',
     cardMetrics: [
-      { value: '1 fonte', label: 'única de verdade' },
-      { value: 'Toda a filial', label: 'atendida' },
+      { value: '1 fonte', label: 'única de verdade', evidence: 'comprovado' },
+      { value: 'Toda a filial', label: 'atendida', evidence: 'comprovado' },
     ],
     context:
       'Dados espalhados entre dezenas de setores, regras de negócio diferentes em cada área e números conflitantes em reuniões. Sem histórico para análise de sazonalidade. Decisões eram tomadas com base em achismo, não em dado. Cada área defendia seu número como "o certo".',
@@ -183,10 +190,10 @@ export const PROJECTS: Project[] = [
     ],
     stack: ['Power BI', 'Python', 'SQL', 'Databricks', 'Power Automate'],
     results: [
-      { value: '1 fonte', label: 'única de dados para toda a filial' },
-      { value: 'Todos os níveis', label: 'de gestão atendidos' },
-      { value: 'Semanal', label: 'uso em reuniões executivas' },
-      { value: '100%', label: 'das automações de alimentação ativas' },
+      { value: '1 fonte', label: 'única de dados para toda a filial', evidence: 'comprovado' },
+      { value: 'Todos os níveis', label: 'de gestão atendidos', evidence: 'comprovado' },
+      { value: 'Semanal', label: 'uso em reuniões executivas', evidence: 'comprovado' },
+      { value: '100%', label: 'das automações de alimentação ativas', evidence: 'comprovado' },
     ],
     learnings:
       'BI é 30% tecnologia e 70% política. Antes de construir dashboard, é preciso alinhar quem manda em cada número. Cada área acha que o seu número é o certo — e o papel do analista é construir consenso, não impor.',

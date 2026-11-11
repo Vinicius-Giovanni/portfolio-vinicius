@@ -6,11 +6,10 @@ import {
   SiCss,
   SiHtml5,
   SiPython,
-  SiOpenjdk,
+  SiDatabricks,
 } from 'react-icons/si'
-import { BarChart3, Workflow, Bot } from 'lucide-react'
+import { BarChart3, Workflow, Bot, Database } from 'lucide-react'
 import { SectionLabel } from '@/components/ui/SectionLabel'
-import { Marquee } from '@/components/ui/Marquee'
 import { TiltCard } from '@/components/ui/TiltCard'
 
 type Tech = {
@@ -22,20 +21,23 @@ type Tech = {
 const TECHNOLOGIES: Tech[] = [
   { label: 'Python', Icon: SiPython, color: '#3776AB' },
   { label: 'Power BI', Icon: BarChart3, color: '#F2C811' },
+  { label: 'SQL', Icon: Database, color: '#336791' },
+  { label: 'Databricks', Icon: SiDatabricks, color: '#FF3621' },
   { label: 'JavaScript', Icon: SiJavascript, color: '#F7DF1E' },
   { label: 'TypeScript', Icon: SiTypescript, color: '#3178C6' },
-  { label: 'Java', Icon: SiOpenjdk, color: '#007396' },
   { label: 'RPA', Icon: Bot, color: '#6B21A8' },
   { label: 'Power Automate', Icon: Workflow, color: '#0066FF' },
   { label: 'CSS', Icon: SiCss, color: '#1572B6' },
   { label: 'HTML', Icon: SiHtml5, color: '#E34F26' },
 ]
 
-const SKILLS_ROW_1 = ['Business Intelligence', 'Data Analyst', 'Engineer Data', 'Finanças']
-const SKILLS_ROW_2 = [
+const SKILL_CHIPS = [
+  'Business Intelligence',
+  'Data Quality',
+  'Análise de Dados',
+  'Engenharia de Dados',
   'Robotic Process Automation',
-  'AI (Artificial Intelligence)',
-  'Tributação',
+  'Automação com IA',
 ]
 
 export function Stack() {
@@ -43,7 +45,7 @@ export function Stack() {
 
   return (
     <section id="stack" data-snap="start" className="bg-cream relative overflow-hidden py-24 md:py-32">
-      {/* ===== BACKGROUND ===== */}
+      {/* Background */}
       <div className="absolute inset-0 -z-10" aria-hidden>
         <div
           className="absolute inset-0 opacity-[0.05]"
@@ -72,58 +74,47 @@ export function Stack() {
         )}
       </div>
 
-      {/* ===== HEADER ===== */}
+      {/* Header */}
       <div className="relative z-10 mx-auto mb-14 w-[min(92%,1280px)]">
         <SectionLabel>STACK</SectionLabel>
 
         <div className="mt-10 flex flex-wrap items-baseline gap-4 md:gap-8">
           <div>
             <span className="font-anton text-navy text-[clamp(3rem,8vw,6rem)] leading-none">
-              09
+              {String(TECHNOLOGIES.length).padStart(2, '0')}
             </span>
             <p className="text-navy/60 mt-1 text-[10px] font-bold tracking-[0.25em] uppercase md:text-xs">
               Tecnologias
             </p>
           </div>
-          <div className="font-anton text-navy/20 text-[clamp(2rem,4vw,3rem)] leading-none">
-            /
-          </div>
-          <div>
-            <span className="font-anton text-navy text-[clamp(3rem,8vw,6rem)] leading-none">
-              07
-            </span>
-            <p className="text-navy/60 mt-1 text-[10px] font-bold tracking-[0.25em] uppercase md:text-xs">
-              Competências
-            </p>
-          </div>
         </div>
 
         <p className="text-navy/60 mt-6 max-w-md text-sm leading-relaxed">
-          Ferramentas e habilidades que aplico no dia a dia — da análise de dados à automação.
+          Ferramentas que aplico no dia a dia — da análise de dados à automação.
         </p>
       </div>
 
-      {/* ===== TECH GRID ===== */}
+      {/* Tech grid */}
       <div className="relative z-10 mx-auto w-[min(92%,1280px)]">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-5">
           {TECHNOLOGIES.map((tech, i) => (
             <TechTile key={tech.label} tech={tech} index={i} />
           ))}
         </div>
       </div>
 
-      {/* ===== SKILLS MARQUEE ===== */}
-      <div className="relative z-10 mt-20 flex flex-col gap-4">
-        <Marquee speed={40} direction="left" gap="1rem">
-          {SKILLS_ROW_1.map((s) => (
-            <SkillPill key={s} label={s} />
+      {/* Chips estáticos */}
+      <div className="relative z-10 mx-auto mt-14 w-[min(92%,1280px)]">
+        <div className="flex flex-wrap gap-2">
+          {SKILL_CHIPS.map((chip) => (
+            <span
+              key={chip}
+              className="border-navy/25 bg-cream text-navy rounded-full border px-5 py-2.5 text-sm font-medium"
+            >
+              {chip}
+            </span>
           ))}
-        </Marquee>
-        <Marquee speed={44} direction="right" gap="1rem">
-          {SKILLS_ROW_2.map((s) => (
-            <SkillPill key={s} label={s} />
-          ))}
-        </Marquee>
+        </div>
       </div>
     </section>
   )
@@ -191,13 +182,5 @@ function TechTile({ tech, index }: { tech: Tech; index: number }) {
         </div>
       </TiltCard>
     </motion.div>
-  )
-}
-
-function SkillPill({ label }: { label: string }) {
-  return (
-    <span className="rounded-brand border-navy/25 bg-cream text-navy hover:bg-navy hover:text-cream inline-flex shrink-0 items-center border px-6 py-3 text-[clamp(0.9rem,1.3vw,1.1rem)] font-medium whitespace-nowrap transition-colors duration-300 md:px-8 md:py-4">
-      {label}
-    </span>
   )
 }
