@@ -60,7 +60,7 @@ export function DiagnosticGargalos({ accentColor }: { accentColor: string }) {
         <div className="w-full max-w-5xl">
           {/* FLOW VISUAL — vertical no mobile, horizontal no desktop */}
           <motion.div
-            style={reduced ? {} : { opacity: flowOpacity, scale: flowScale }}
+            style={reduced ? { display: 'none' } : { opacity: flowOpacity, scale: flowScale }}
             className="relative"
           >
             <p className="text-navy/50 mb-6 text-center font-mono text-[10px] font-bold tracking-[0.25em] uppercase md:mb-8">

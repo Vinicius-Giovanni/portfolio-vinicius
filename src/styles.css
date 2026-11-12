@@ -55,9 +55,11 @@
      ESPAÇAMENTO FLUIDO
      ------------------------------------------------------- */
   --spacing-fluid-section: max(4rem, 7vw);      /* py de seção */
+  --spacing-section: max(4rem, 7vw);
   --spacing-fluid-gap: max(0.75rem, 1.2vw);     /* gap entre cards */
   --spacing-fluid-gap-lg: max(1rem, 1.6vw);     /* gap entre colunas */
   --spacing-fluid-pad: max(1.25rem, 2vw);       /* padding interno de card */
+  --spacing-pad: max(1.25rem, 2vw);
   --spacing-fluid-pad-lg: max(1.5rem, 2.5vw);   /* padding de seção */
 
   /* -------------------------------------------------------
@@ -65,7 +67,9 @@
      ------------------------------------------------------- */
   --container-fluid: min(92vw, 1600px);
   --container-fluid-narrow: min(88vw, 1080px);
+  --container-narrow: min(88vw, 1080px);
   --container-fluid-wide: min(95vw, 1920px);
+  --container-wide: min(95vw, 1920px);
 
   /* Touch target mínimo WCAG */
   --spacing-touch: max(2.75rem, 3.5vw);  /* ≥ 44px */

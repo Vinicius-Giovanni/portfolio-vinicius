@@ -11,20 +11,29 @@ export function About() {
     offset: ['start end', 'start start'],
   })
 
-  const inset = useTransform(scrollYProgress, [0, 1], ['48px', '0px'])
+  const insetProgress = useTransform(scrollYProgress, [0, 1], [1, 0])
   const radius = useTransform(scrollYProgress, [0, 1], ['30px', '0px'])
 
   const textOpacity = useTransform(scrollYProgress, [0.35, 0.9], [0, 1])
   const textY = useTransform(scrollYProgress, [0.35, 0.9], [30, 0])
 
+  const topInset = useTransform(insetProgress, (v) => `${v * 36}px`)
+  const sideInset = useTransform(insetProgress, (v) => `${Math.round(v * 24)}px`)
+
   const imageStyle = reduced
-    ? { inset: '48px', borderRadius: '30px' }
-    : { inset, borderRadius: radius }
+    ? { inset: '0px', borderRadius: '0px' }
+    : {
+        top: topInset,
+        bottom: topInset,
+        left: sideInset,
+        right: sideInset,
+        borderRadius: radius,
+      }
 
   const textStyle = reduced ? { opacity: 1, y: 0 } : { opacity: textOpacity, y: textY }
 
   return (
-    <section id="sobre" ref={ref} data-snap="start" className="relative h-[110vh] md:h-[140vh]">
+    <section id="sobre" ref={ref} data-snap="start" className="relative h-[125vh] md:h-[140vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* CAMADA 1 — Imagem com inset animado */}
         <motion.div style={imageStyle} className="absolute overflow-hidden">

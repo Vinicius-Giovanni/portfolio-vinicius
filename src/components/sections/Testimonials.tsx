@@ -143,7 +143,7 @@ export function Testimonials() {
 
       {/* Palco */}
       <div
-        className="relative mx-auto mt-12 flex h-[60vh] min-h-[460px] max-h-[560px] w-[min(92%,1100px)] items-center justify-center md:mt-16"
+        className="relative mx-auto mt-12 flex min-h-[520px] md:min-h-[460px] md:h-[60vh] md:max-h-[560px] w-[min(92%,1100px)] items-center justify-center md:mt-16"
         style={{ perspective: 1600 }}
         onTouchStart={(e) => {
           touchStart.current = e.touches[0].clientX
@@ -191,7 +191,7 @@ export function Testimonials() {
               ease: [0.22, 1, 0.36, 1],
             }}
             style={{ transformStyle: 'preserve-3d', position: 'absolute' }}
-            className="border-navy/10 relative flex w-full max-w-3xl flex-col items-center gap-4 rounded-[40px] border bg-white/95 px-6 py-8 shadow-[0_40px_80px_-30px_rgba(11,31,58,0.4)] backdrop-blur-sm md:gap-5 md:px-10 md:py-10"
+            className="border-navy/10 relative flex w-full max-w-3xl flex-col items-center gap-3.5 rounded-[32px] sm:rounded-[40px] border bg-white/95 px-5 py-6 sm:px-6 sm:py-8 shadow-[0_40px_80px_-30px_rgba(11,31,58,0.4)] backdrop-blur-sm md:gap-5 md:px-10 md:py-10"
           >
             <Quote
               className="text-navy/[0.06] pointer-events-none absolute top-3 left-4 h-16 w-16 md:top-4 md:left-6 md:h-24 md:w-24"

@@ -38,7 +38,7 @@ export function ProjectCard({
         className={cn(
           'rounded-brand border-navy/15 bg-cream/40 hover:bg-cream/70 hover:border-navy/40 relative flex h-full flex-col overflow-hidden border backdrop-blur-sm transition-all duration-300',
           'hover:shadow-[0_16px_40px_-12px_rgba(11,31,58,0.18)]',
-          isFeatured ? 'p-7 md:p-10' : 'p-6 md:p-8',
+          isFeatured ? 'p-5 sm:p-7 md:p-10' : 'p-5 sm:p-6 md:p-8',
         )}
       >
         {/* Glow colorido no hover */}

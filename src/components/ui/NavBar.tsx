@@ -3,8 +3,7 @@ import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { calUrl } from '@/data/site'
-import { CTA_LABEL } from '@/data/site'
+import { calUrl, CTA_LABEL } from '@/data/site'
 import { HAS_INSIGHTS } from '@/data/insights'
 import { track } from '@/lib/track'
 

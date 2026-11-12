@@ -39,14 +39,14 @@ function CVPage() {
         </div>
 
         {/* Folha A4 */}
-        <main className="mx-auto max-w-[210mm] bg-white p-[20mm] shadow-xl print:max-w-none print:p-0 print:shadow-none">
+        <main className="mx-auto max-w-[210mm] bg-white p-5 sm:p-10 md:p-[20mm] shadow-xl print:max-w-none print:p-0 print:shadow-none">
           {/* Header */}
           <header className="border-b border-[#0b1f3a]/20 pb-4">
-            <h1 className="text-3xl font-bold tracking-tight">{PROFILE.name}</h1>
-            <p className="mt-1 text-sm text-[#0b1f3a]/70">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{PROFILE.name}</h1>
+            <p className="mt-1 text-xs sm:text-sm text-[#0b1f3a]/70 break-words">
               {PROFILE.location} · {PROFILE.email} · {PROFILE.phone}
             </p>
-            <p className="mt-0.5 text-sm text-[#0b1f3a]/70">
+            <p className="mt-0.5 text-xs sm:text-sm text-[#0b1f3a]/70 break-words">
               {PROFILE.linkedin} · {PROFILE.github}
             </p>
           </header>

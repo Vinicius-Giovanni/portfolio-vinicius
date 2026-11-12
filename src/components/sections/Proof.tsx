@@ -36,7 +36,6 @@ export function Proof() {
         <div className="mt-14 grid grid-cols-2 gap-4 lg:grid-cols-4 md:gap-5">
           {PROOF_IDS.map((id, i) => {
             const m = METRICS[id]
-            if (!m) return null
             return (
               <motion.div
                 key={id}
@@ -44,9 +43,9 @@ export function Proof() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                className="border-cream/10 rounded-2xl border p-5 md:p-6"
+                className="border-cream/10 rounded-2xl border p-4 sm:p-5 md:p-6"
               >
-                <p className="font-anton text-cream text-[clamp(1.75rem,4vw,3rem)] leading-[0.95] tracking-tight">
+                <p className="font-anton text-cream text-[clamp(1.4rem,3.8vw,3rem)] leading-[0.95] tracking-tight">
                   {m.value}
                 </p>
                 <p className="text-cream/70 mt-2 text-xs font-semibold leading-tight uppercase tracking-wide">
@@ -73,7 +72,6 @@ export function Proof() {
         <div className="border-cream/10 mt-10 flex flex-wrap gap-6 border-t pt-8 md:gap-10">
           {VOLUME_IDS.map((id) => {
             const m = METRICS[id]
-            if (!m) return null
             return (
               <div key={id} className="flex items-baseline gap-3">
                 <span className="font-anton text-cream text-2xl leading-none">{m.value}</span>

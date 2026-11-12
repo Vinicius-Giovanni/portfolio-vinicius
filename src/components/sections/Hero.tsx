@@ -1,4 +1,5 @@
-import { useRef, type ReactNode } from 'react'
+import { useRef } from 'react'
+import type { ReactNode } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
 import {
   SiPython,
@@ -18,20 +19,20 @@ import { track } from '@/lib/track'
 const HERO_ROLE = 'Analista de Dados'
 
 const WORD_STYLE = {
-  fontSize: 'clamp(2rem, 17.5vw, 25rem)',
+  fontSize: 'clamp(2.5rem, 16vw, 25rem)',
   lineHeight: 0.85,
   letterSpacing: '-0.02em',
 } as const
 
 const FLOATING_TECHS = [
-  { Icon: SiPython, pos: 'top-[16%] left-[5%]', delay: 0, hideOnMobile: false },
-  { Icon: SiDatabricks, pos: 'top-[14%] right-[7%]', delay: 0.3, hideOnMobile: false },
-  { Icon: SiJavascript, pos: 'top-[42%] left-[2%]', delay: 0.6, hideOnMobile: true },
-  { Icon: SiTypescript, pos: 'top-[45%] right-[3%]', delay: 0.9, hideOnMobile: true },
-  { Icon: SiCss, pos: 'bottom-[42%] left-[6%]', delay: 1.2, hideOnMobile: true },
-  { Icon: BarChart3, pos: 'bottom-[44%] right-[5%]', delay: 1.5, hideOnMobile: false },
-  { Icon: Bot, pos: 'bottom-[30%] left-[13%]', delay: 1.8, hideOnMobile: true },
-  { Icon: SiHtml5, pos: 'bottom-[32%] right-[12%]', delay: 2.1, hideOnMobile: true },
+  { Icon: SiPython, pos: 'top-[24%] right-[6%] md:top-[30%] md:left-[5%] md:right-auto', delay: 0, hideOnMobile: false },
+  { Icon: SiDatabricks, pos: 'top-[44%] right-[7%]', delay: 0.3, hideOnMobile: false },
+  { Icon: SiJavascript, pos: 'top-[32%] left-[20%] md:top-[22%]', delay: 0.6, hideOnMobile: false },
+  { Icon: SiTypescript, pos: 'top-[35%] right-[30%] md:top-[20%]', delay: 0.9, hideOnMobile: false},
+  { Icon: SiCss, pos: 'bottom-[42%] left-[6%] md:top-[60%]', delay: 1.2, hideOnMobile: false },
+  { Icon: BarChart3, pos: 'bottom-[22%] right-[5%]', delay: 1.5, hideOnMobile: false },
+  { Icon: Bot, pos: 'bottom-[30%] left-[13%] md:top-[80%]', delay: 1.8, hideOnMobile: false },
+  { Icon: SiHtml5, pos: 'bottom-[32%] right-[12%]', delay: 2.1, hideOnMobile: false },
 ]
 
 const capMet = METRICS['cap-liberado']
@@ -66,7 +67,7 @@ export function Hero() {
       {/* Camada 1 — PORTFÓLIO fill */}
       <motion.div
         style={{ y: yText, opacity: fade }}
-        className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center pt-[18vh] md:items-center md:pt-0"
+        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
       >
         <h1 className="font-anton text-navy select-none" style={WORD_STYLE}>
           PORTFÓLIO
@@ -99,14 +100,14 @@ export function Hero() {
       {/* Foto */}
       <motion.picture
         style={{ y: yPhoto }}
-        className="pointer-events-none absolute bottom-0 left-1/2 z-20 flex h-[78%] max-w-none -translate-x-1/2 items-end md:h-[85%] xl:h-[88%]"
+        className="pointer-events-none absolute bottom-0 left-1/2 z-20 flex w-[90vw] max-w-[460px] -translate-x-1/2 items-end justify-center md:h-[85%] md:w-auto md:max-w-none xl:h-[88%]"
       >
         <source srcSet="/assets/vinicius-hero.avif" type="image/avif" />
         <source srcSet="/assets/vinicius-hero.webp" type="image/webp" />
         <img
           src="/assets/vinicius-hero.png"
           alt="Vinícius G Pereira"
-          className="h-full w-auto object-contain"
+          className="h-auto w-full object-contain object-bottom md:h-full md:w-auto"
           draggable={false}
           fetchPriority="high"
           width={800}
@@ -118,11 +119,15 @@ export function Hero() {
       <motion.div
         style={{ y: yText, opacity: fade }}
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-30 flex items-start justify-center pt-[18vh] md:items-center md:pt-0"
+        className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
       >
         <span
           className="font-anton select-none"
-          style={{ ...WORD_STYLE, color: 'transparent', WebkitTextStroke: '3px #EDE6D8' }}
+          style={{
+            ...WORD_STYLE,
+            color: 'transparent',
+            WebkitTextStroke: 'clamp(1.5px, 0.22vw, 3px) #EDE6D8',
+          }}
         >
           PORTFÓLIO
         </span>
@@ -133,7 +138,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-[max(4.5rem,8vh)] left-[max(1.25rem,3vw)] z-40"
+        className="absolute top-[max(4.5rem,8vh)] left-[max(1.25rem,3vw)] z-40 max-w-[calc(100vw-2.5rem)]"
       >
         <p
           className="text-navy font-bold tracking-tight"
@@ -147,18 +152,16 @@ export function Hero() {
         >
           {HERO_ROLE} · Engenharia de Dados
         </p>
-        {capMet && (
-          <p
-            className="text-navy/50 mt-2 max-w-xs font-medium leading-snug"
-            style={{ fontSize: 'max(0.7rem, 0.85vw)' }}
-          >
-            {capMet.value} de capital liberado em operação de +100 mil peças/dia
-          </p>
-        )}
+        <p
+          className="text-navy/50 mt-2 max-w-xs font-medium leading-snug"
+          style={{ fontSize: 'max(0.7rem, 0.85vw)' }}
+        >
+          {capMet.value} de capital liberado em operação de +100 mil peças/dia
+        </p>
       </motion.div>
 
       {/* Botões */}
-      <div className="absolute bottom-[max(1.5rem,4vh)] left-1/2 z-40 flex w-[min(92%,600px)] -translate-x-1/2 flex-col items-stretch gap-2.5 sm:grid sm:grid-cols-2 sm:gap-3">
+      <div className="absolute bottom-[max(1.5rem,4vh)] left-1/2 z-40 grid w-[min(92%,540px)] -translate-x-1/2 grid-cols-2 gap-2.5 sm:gap-3">
         <HeroButton
           href={calUrl('hero')}
           variant="solid"
@@ -192,7 +195,7 @@ type HeroButtonProps = {
 
 function HeroButton({ variant, delay, children, href, linkTo, onClick, 'data-cta': dataCta }: HeroButtonProps) {
   const classes = cn(
-    'rounded-brand flex min-h-11 items-center justify-center px-4 py-3 text-center font-bold whitespace-nowrap md:min-h-12 md:px-5',
+    'rounded-brand flex min-h-11 items-center justify-center px-3 py-2.5 sm:px-4 sm:py-3 text-center font-bold whitespace-nowrap text-xs sm:text-sm md:min-h-12 md:px-5',
     variant === 'solid' ? 'bg-navy text-cream' : 'bg-cream text-navy border-navy border',
   )
   const motionProps = {
